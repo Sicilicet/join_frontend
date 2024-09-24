@@ -47,11 +47,11 @@ function showError(elementId, message) {
   errorElement.textContent = message;
 }
 // gets guest access to login
-async function guestLogin(event) {
+/* async function guestLogin(event) {
   event.preventDefault();
   const csrfToken = getCSRFToken();
   await loginUser('Guest', 'guest123', csrfToken);
-}
+} */
 
 function getCSRFToken() {
   let csrfToken = null;

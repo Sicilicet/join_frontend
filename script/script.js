@@ -1,243 +1,184 @@
-/** LEGAL NOTICE */
-
-function initLegalNotice() {
-  showHeaderTemplate().then(() => {
-    CurrentlyActiveWebpage('legal-notice.html', 'navLegalNotice');
-  });
+/**
+ * Initializes the code on load.
+ * @returns {Promise<void>}
+ */
+async function init() {
+  await includeHTML();
+  CheckIfLoggedInOrGuest();
+  checkFocusOnSidenav();
 }
 
-async function showHeaderTemplate() {
-  const antwoord = await fetch('templates/header.html');
-  const headertemplate = await antwoord.text();
-  document.getElementById('header-template').innerHTML = headertemplate;
+/**
+ * Check which page is active and sets corresponding class and image.
+ */
+function setActivePage(pageName, pageId, imgId, imgPathBlue, imgPathDefault) {
+  let responsive = window.innerWidth < 1000;
+  // currentTodoId = '';
+  if (document.location.pathname.includes(pageName)) {
+    let pageElement = document.getElementById(pageId);
+    let imgElement = document.getElementById(imgId);
+    if (pageElement && imgElement) {
+      pageElement.classList.add('active');
+      imgElement.src = responsive ? imgPathBlue : imgPathDefault;
+    }
+  }
+}
+function checkFocusOnSidenav() {
+  setActivePage('contacts.html', 'contactsPage', 'contactsImg', 'assets/img/contacts_blue.png', 'assets/img/nav-contact-icon.png');
+  setActivePage('add_task.html', 'taskPage', 'taskImg', 'assets/img/addtask_blue.png', 'assets/img/nav-add-task-icon.png');
+  setActivePage('board.html', 'boardPage', 'boardImg', 'assets/img/board_blue.png', 'assets/img/nav-board-icon.png');
+  setActivePage('summary.html', 'summaryPage', 'summaryImg', 'assets/img/summary_blue.png', 'assets/img/nav-summary-icon.png');
 }
 
-/** WEBPAGES IN GENERAL */
-
-function emptyInnerHTML(whichID) {
-  document.getElementById(whichID).innerHTML = '';
-}
-
-function saveInLocalStorage(whatToSave, whereToSave) {
-  localStorage.setItem(whatToSave, JSON.stringify(whereToSave));
-}
-
-function toggleLogoutBtn(event) {
-  event.stopPropagation();
-  document.getElementById('logout-menu').classList.toggle('d-none');
-  document.getElementById('logout-btn').classList.toggle('d-none');
-  if (window.innerWidth <= 820) {
-    document.getElementById('help-btn').classList.toggle('d-none');
-    document.getElementById('legal-notice-btn').classList.toggle('d-none');
+/**
+ * Loads the animated image.
+ */
+function loadImg() {
+  let container = document.getElementById('logo-container');
+  let img = document.getElementById('logo-img');
+  img.classList.remove('frontImage');
+  img.classList.add('imgResponsive');
+  if (document.location.pathname.includes('index.html')) {
+    img.src = 'assets/img/logo_blue.png';
+    container.style.zIndex = '8';
+    container.style.backgroundColor = 'white';
+    document.getElementById('login-container').style.display = 'flex';
   }
 }
 
-function hideLogoutBtn() {
-  document.getElementById('logout-menu').classList.add('d-none');
-  document.getElementById('logout-btn').classList.add('d-none');
-  if (window.innerWidth <= 820) {
-    document.getElementById('help-btn').classList.add('d-none');
-    document.getElementById('legal-notice-btn').classList.add('d-none');
-  }
-}
-
-function closeOverlay(whichContainer) {
-  document.getElementById(whichContainer).style.display = 'none';
-}
-
-function openOverlay(whichContainer) {
-  document.getElementById(whichContainer).style.display = 'flex';
-}
-
-function closeToggle(whichContainer) {
-  let container = document.getElementById(whichContainer);
-  if (container.style.display === 'flex') {
-    container.style.display = 'none';
-  }
-}
-
-function closeAllToggle() {
-  closeToggle('available-categories');
-  closeToggle('category-new-input-submit');
-  closeToggle('assign-to');
-}
-
-function toggleVisibility(whichContainer) {
-  let container = document.getElementById(whichContainer);
-  if (container.style.display === 'none') {
-    container.style.display = 'flex';
-  } else {
-    container.style.display = 'none';
-  }
-}
-
-function whichWindow() {
-  let currentPage = window.location.pathname.split('/').pop();
-  if (currentPage !== 'contacts.html' && currentPage !== 'add-task.html') {
-    displayTasksInBoard();
-  }
-  if (currentPage !== 'add-task.html') {
-    removeMoveOverlayTaskAdded('add-task-overlay', 'addTask');
-  }
-  if (currentPage === 'add-task.html') {
-    addMoveSite();
-  }
-}
-
-function CurrentlyActiveWebpage(webpage, id) {
-  let currentPage = window.location.pathname.split('/').pop();
-  if (currentPage === webpage) {
-    document.getElementById(id).classList.add('active-webpage');
-  } else if (currentPage !== webpage) {
-    document.getElementsByName('active-webpage').classList.remove('active-webpage');
-  }
-}
-
-function clearInputs() {
-  undownTheDropdown();
-  let inputs = document.getElementsByTagName('input');
-  for (let i = 0; i < inputs.length; i++) {
-    if (inputs[i].type === 'text' || inputs[i].type === 'email' || inputs[i].type === 'number' || inputs[i].type === 'calender') {
-      inputs[i].value = '';
-    } else if (inputs[i].type === 'color') {
-      inputs[i].value = randomColorGeneration();
-    } else if (inputs[i].type === 'checkbox') {
-      inputs[i].checked = false;
-      displaySelectedCategories();
-      displaySelectedTeammates();
+/**
+ * Include HTML function for usage of templates.
+ * @returns {Promise<void>}
+ */
+async function includeHTML() {
+  let includeElements = document.querySelectorAll('[w3-include-html]');
+  for (let i = 0; i < includeElements.length; i++) {
+    const element = includeElements[i];
+    file = element.getAttribute('w3-include-html'); // "includes/header.html"
+    let resp = await fetch(file);
+    if (resp.ok) {
+      element.innerHTML = await resp.text();
+    } else {
+      element.innerHTML = 'Page not found';
     }
   }
 }
 
-function clearSubmit() {
-  let submitInputsList = document.querySelectorAll('.submitInputs');
-  submitInputsList.forEach(function (input) {
-    input.classList.add('d-none');
-  });
-  removeMoveOverlay('overlayADDContactContainer', 'overlayAdd', 'contactContainer');
-}
+/**
+ * Desktop template, shows options on logged-in user/guest.
+ */
+function showNavDropDown() {
+  let dropdown = document.getElementById('navbar-dropdown');
 
-function clearTextarea() {
-  document.getElementById('description-input').value = '';
-}
-
-function clearInputCategories() {
-  document.getElementById('add-new-category').value = '';
-  document.getElementById('submitCategoryInput').classList.add('d-none');
-}
-
-function clearInputSubtasks() {
-  document.getElementById('add-subtask').value = '';
+  if (dropdown.classList.contains('d-none')) {
+    dropdown.classList.remove('d-none');
+  } else {
+    dropdown.classList.add('d-none');
+  }
 }
 
 /**
- * In Overlay Add Task we close and open die Dropdowns of Contacts and Categories
- * just to make it look pretty, when opening again, aner for generating purposes
+ * Checks if a user is logged in or else as a guest.
  */
-function undownTheDropdown() {
-  let dropDowns = ['available-categories', 'category-new-input-submit', 'assign-to'];
-  dropDowns.forEach((element) => {
-    let avaDropDown = document.getElementById(element);
-    if (avaDropDown) closeOverlay(element);
-  });
-}
-
-function downTheDropdown() {
-  let dropDowns = ['available-categories', 'category-new-input-submit', 'assign-to'];
-  dropDowns.forEach((element) => {
-    let avaDropDown = document.getElementById(element);
-    if (avaDropDown) openOverlay(element);
-  });
-}
-
-function addMoveOverlay(id, background, boardID) {
-  document.getElementById(id).classList.remove('close-overlay-animation');
-  document.getElementById(id).classList.add('move-overlay-animation');
-  document.getElementById(boardID).classList.add('dontScoll');
-  openOverlay(background);
-  openOverlay(id);
-}
-
-function removeMoveOverlay(id, background, boardID) {
-  document.getElementById(id).classList.remove('move-overlay-animation');
-  document.getElementById(id).classList.add('close-overlay-animation');
-  setTimeout(() => {
-    document.getElementById(boardID).classList.remove('dontScoll');
-    closeOverlay(id);
-    closeOverlay(background);
-  }, 450);
-}
-
-function changeButtonEditTask(i) {
-  openOverlay('closeXtemplate');
-  document.getElementById('headerAddTask').innerHTML = 'Edit Task';
-  let createButton = document.getElementById('createTask');
-  let subtaskButton = document.getElementById('checkmarkSubtasks');
-  let clearCancelButton = document.getElementById('clearCancelButton');
-  if (createButton.hasAttribute('onclick')) {
-    createButton.setAttribute('onclick', `updateTaskData(${i})`);
-    createButton.innerHTML = `Save Task <img class="plus-done" src="img/done.png" alt="" />`;
-    subtaskButton.setAttribute('onclick', `getAndPushNewSubtasksFromInput(${i})`);
-    clearCancelButton.innerHTML = 'Cancel';
-    clearCancelButton.setAttribute('onclick', `closeTemplateAddTask()`);
+async function CheckIfLoggedInOrGuest() {
+  loggedInUser = localStorage.getItem('User');
+  if (
+    document.location.pathname.includes('add_task.html') ||
+    document.location.pathname.includes('board.html') ||
+    document.location.pathname.includes('contacts.html') ||
+    document.location.pathname.includes('summary.html')
+  ) {
+    if (loggedInUser) {
+      document.getElementById('user-initials').innerHTML = `<div>${returnInitials(loggedInUser)}</div>`;
+      if (document.location.pathname.includes('summary.html')) {
+        document.getElementById('summary-headline').innerHTML = `${checkTimeOfDay()}, ${loggedInUser}`;
+      }
+    } else {
+      document.getElementById('user-initials').innerHTML = '<div>G</div>';
+      if (document.location.pathname.includes('summary.html')) {
+        document.getElementById('summary-headline').innerHTML = `${checkTimeOfDay()}`;
+      }
+    }
   }
-  whatToDoWithCategoryButton(i);
-  undownTheDropdown();
 }
 
-function whatToDoWithCategoryButton(i) {
-  let categoryButton = document.getElementById('checkmarkCategory');
-  if (categoryButton == true) {
-    categoryButton.setAttribute('onclick', `getNewCategoryFromInputShowOldInput(${i})`);
+/**
+ * Gets current time and day and answers to it.
+ * @returns {string} Greeting based on the time of day.
+ */
+function checkTimeOfDay() {
+  let currentDate = new Date();
+  let currentHour = currentDate.getHours();
+
+  if (currentHour >= 6 && currentHour < 12) {
+    return 'Good Morning';
+  } else if (currentHour >= 12 && currentHour < 18) {
+    return 'Good Day';
   } else {
-    downTheDropdown();
-    categoryButton.setAttribute('onclick', `getNewCategoryFromInputShowOldInput(${i})`);
+    return 'Good Evening';
   }
 }
 
-function rechangeButtonAddTask() {
-  closeOverlay('closeXtemplate');
-  document.getElementById('headerAddTask').innerHTML = 'Add Task';
-  let addButton = document.getElementById('createTask');
-  let subtaskButton = document.getElementById('checkmarkSubtasks');
-  let clearCancelButton = document.getElementById('clearCancelButton');
-  if (addButton.hasAttribute('onclick')) {
-    addButton.setAttribute('onclick', 'createTask()');
-    addButton.innerHTML = `Create Task <img class="plus-done" src="img/done.png" alt="" />`;
-    subtaskButton.setAttribute('onclick', `getSubtasksFromInput()`);
-    clearCancelButton.innerHTML = 'Clear';
-    clearCancelButton.setAttribute('onclick', `clearAddTask()`);
+/**
+ * Gets the initials of a name.
+ * @param {string} name - The full name from which initials are extracted.
+ * @returns {string} Initials of the given name.
+ */
+function returnInitials(name) {
+  let names = name.split(' ');
+  let initials = '';
+
+  for (let name of names) {
+    initials += name.charAt(0).toUpperCase();
   }
-  rechangeWhatHappenedToCategoryButton();
-  toggleVisibility('category-new-input-submit');
+  return initials;
 }
 
-function rechangeWhatHappenedToCategoryButton() {
-  let categoryButton = document.getElementById('checkmarkCategory');
-  if (categoryButton == true) {
-    categoryButton.setAttribute('onclick', `saveNewCategory()`);
-  } else {
-    toggleVisibility('category-new-input-submit');
-    categoryButton.setAttribute('onclick', `saveNewCategory()`);
-  }
+/**
+ * Logs out user and returns to index.
+ */
+async function logout() {
+  const url = 'http://127.0.0.1:8000/logout/';
+  const requestOptions = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': getCookie('csrftoken'),
+    },
+    // credentials: 'include'
+  };
+  await fetch(url, requestOptions)
+    .then((response) => {
+      if (response.ok) {
+        loggedInUser = null;
+        localStorage.removeItem('User');
+        localStorage.removeItem('Token');
+        window.location.href = 'index.html';
+      } else {
+        console.error('Logout fehlgeschlagen');
+      }
+    })
+    .catch((error) => console.error('fehler', error));
 }
 
-function changeFunctionsOnTemplateButtons() {
-  openOverlay('closeXtemplate');
-  let clearCancelButton = document.getElementById('clearCancelButton');
-  if (clearCancelButton.hasAttribute('onclick')) {
-    clearCancelButton.setAttribute('onclick', `closeTemplateAddTask()`);
-    clearCancelButton.innerHTML = 'Cancel';
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === name + '=') {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
   }
+  return cookieValue;
 }
 
-function formValidation(whichInput, whichSubmitText) {
-  let input = document.getElementById(whichInput).value;
-  if (input.length >= 3) {
-    document.getElementById(whichSubmitText).classList.add('d-none');
-    return input;
-  } else {
-    document.getElementById(whichSubmitText).classList.remove('d-none');
-    return input;
-  }
-}
+/**
+ * Event listener for window resize, calls checkFocusOnSidenav.
+ */
+window.addEventListener('resize', function () {
+  checkFocusOnSidenav();
+});

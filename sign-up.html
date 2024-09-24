@@ -1,0 +1,35 @@
+<html>
+  <div class="sign-up-container d-none" id="sign-up-container">
+    <img src="img/Pfeil-links.png" onclick="backToLoginContainer('login-container', 'sign-up-container', 'login-sign-up-container')" />
+    <h1 class="headline-one">Sign up</h1>
+    <div class="log-in-underline"></div>
+    <form class="sign-up-form-container" onsubmit="addUser(); return false;">
+      <input class="inputsLogin" type="text" placeholder="Name" required style="background-image: url('img/user.png')" id="sign-up-name" />
+      <input class="inputsLogin" type="email" placeholder="Email" required style="background-image: url('img/mail-icon.png')" id="sign-up-email" />
+      <input
+        class="inputsLogin"
+        type="password"
+        placeholder="Password"
+        required
+        style="background-image: url('img/schloss-icon.png')"
+        id="sign-up-password"
+      />
+      <div class="sign-up-button-container">
+        <button class="button01">Sign up</button>
+      </div>
+    </form>
+  </div>
+  <div class="forgot-my-password-container d-none" id="forgot-my-password-container">
+    <img onclick="backToLoginContainer('login-container', 'forgot-my-password-container', 'login-sign-up-container')" src="img/Pfeil-links.png" />
+    <h1 class="headline-one">I forgot my password</h1>
+    <div class="log-in-underline"></div>
+    <p>
+      Don't worry! We will send you an email with the instructions to <br />
+      reset your password.
+    </p>
+    <form class="forgot-my-password-form-container">
+      <input type="email" class="inputsLogin" placeholder="Email" required style="background-image: url('img/mail-icon.png')" />
+      <button class="button01">Send me the email</button>
+    </form>
+  </div>
+</html>
