@@ -59,6 +59,11 @@ form {
   animation: fadeIn 0.4s ease-in forwards 1.2s;
 }
 
+.acceptCheckBox {
+  border-color: #005dff;
+  border: 1px solid #005dff;
+}
+
 #msg-box {
   position: absolute;
   bottom: 250px;
@@ -126,7 +131,7 @@ form {
 .remember {
   display: flex;
   gap: 5px;
-} 
+}
 
 .login-forgot-my-password {
   padding-left: 30px;
@@ -227,6 +232,14 @@ form {
   padding: 0 0 0 10px;
   font-size: 16px;
   color: red;
+}
+
+.signUpHeader {
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  width: 80%;
+  gap: 20%;
 }
 
 @keyframes moveLogo {

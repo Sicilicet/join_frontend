@@ -1,35 +1,82 @@
-<html>
-  <div class="sign-up-container d-none" id="sign-up-container">
-    <img src="img/Pfeil-links.png" onclick="backToLoginContainer('login-container', 'sign-up-container', 'login-sign-up-container')" />
-    <h1 class="headline-one">Sign up</h1>
-    <div class="log-in-underline"></div>
-    <form class="sign-up-form-container" onsubmit="addUser(); return false;">
-      <input class="inputsLogin" type="text" placeholder="Name" required style="background-image: url('img/user.png')" id="sign-up-name" />
-      <input class="inputsLogin" type="email" placeholder="Email" required style="background-image: url('img/mail-icon.png')" id="sign-up-email" />
-      <input
-        class="inputsLogin"
-        type="password"
-        placeholder="Password"
-        required
-        style="background-image: url('img/schloss-icon.png')"
-        id="sign-up-password"
-      />
-      <div class="sign-up-button-container">
-        <button class="button01">Sign up</button>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Join - Register</title>
+    <script src="script/script.js"></script>
+    <script src="script/database.js"></script>
+    <script src="script/register.js"></script>
+    <link rel="icon" href="./img/Capa1.png" type="image/x-icon" />
+    <link rel="stylesheet" href="fonts/fonts.css" />
+    <link rel="stylesheet" href="style/style.css" />
+    <link rel="stylesheet" href="style/login.css" />
+    <link rel="stylesheet" href="style/animations.css" />
+    <link rel="stylesheet" href="style/media.css" />
+    <link rel="stylesheet" href="style/mobile.css" />
+  </head>
+
+  <body onload="init()">
+    <div id="logo-container" class="login-header-container">
+      <img id="logo-img" src="img/Capa1.png" class="move-logo-animation" />
+      <div class="login-header-container-sign-up" id="login-container">
+        <div id="sign-up">
+          <p>Not a Join user?</p>
+          <a class="button01 sign-up-button" href="sign-up.html"><button>Sign up</button></a>
+        </div>
       </div>
-    </form>
-  </div>
-  <div class="forgot-my-password-container d-none" id="forgot-my-password-container">
-    <img onclick="backToLoginContainer('login-container', 'forgot-my-password-container', 'login-sign-up-container')" src="img/Pfeil-links.png" />
-    <h1 class="headline-one">I forgot my password</h1>
-    <div class="log-in-underline"></div>
-    <p>
-      Don't worry! We will send you an email with the instructions to <br />
-      reset your password.
-    </p>
-    <form class="forgot-my-password-form-container">
-      <input type="email" class="inputsLogin" placeholder="Email" required style="background-image: url('img/mail-icon.png')" />
-      <button class="button01">Send me the email</button>
-    </form>
-  </div>
+    </div>
+
+    <div class="container">
+      <div class="login-container">
+        <div class="signUpHeader">
+          <!-- noch anpassen -->
+          <a class="arrow" href="index.html"><img src="img/Pfeil-links.png" alt="" /></a>
+          <h1 class="headline-one">Sing Up</h1>
+        </div>
+        <div class="log-in-underline"></div>
+        <form onsubmit="register(); return false;" class="sign-up-form-container" action="">
+          <input required id="user_name" class="inputsLogin" type="text" placeholder="Name" style="background-image: url('img/user.png')" />
+          <input required id="email" class="inputsLogin" type="email" placeholder="Email" style="background-image: url('img/mail-icon.png')" />
+          <input
+            required
+            id="password"
+            class="inputsLogin"
+            type="password"
+            placeholder="Password"
+            style="background-image: url('img/schloss-icon.png')"
+          />
+          <input
+            required
+            id="repeat_password"
+            class="inputsLogin"
+            type="password"
+            placeholder="Confirm Password"
+            style="background-image: url('img/schloss-icon.png')"
+          />
+          <span id="signUpPassword">passwords do not match!</span>
+          <div id="remember-div" class="remember-me-container">
+            <input required type="checkbox" name="acceptCheckBox" id="acceptCheckBox" class="acceptCheckBox" />
+            <label for="acceptCheckBox"
+              >I accept the
+              <a class="policy" target="”_blank”" href="plain_privacy_policy.html">Privacy policy</a>
+            </label>
+          </div>
+
+          <div class="d-none" id="msgBox">
+            <p>Du hast erfolgreich registriert!</p>
+          </div>
+
+          <div class="sign-up-button-container">
+            <button id="signUpBtn" class="button01">Sing Up</button>
+          </div>
+        </form>
+      </div>
+      <!--         <div class="policys">
+          <a class="policy_link" target="”_blank”" href="plain_privacy_policy.html">Privacy Policy</a>
+          <a class="policy_link" target="”_blank”" href="plain_legal_notice.html">Legal Notice</a>
+        </div> -->
+    </div>
+  </body>
 </html>

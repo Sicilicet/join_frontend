@@ -352,3 +352,9 @@ h1 {
 .logout-container-child a:hover {
   color: #ffffff !important;
 }
+
+.arrow {
+  margin-top: 6%;
+  width: 32px;
+  height: 32px;
+}
