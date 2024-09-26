@@ -1,112 +1,102 @@
-/**
- * Initializes the user session when the page is loaded.
- * This function first retrieves the username stored in local storage under the key 'username'.
- * Once the username is retrieved, it calls the 'greetUser' function with this username as an argument.
- */
-function init() {
-  showHeaderTemplate().then(() => {
-    CurrentlyActiveWebpage('summary.html', 'navSummary');
-    let username = localStorage.getItem("username");
-    greetUser(username);
-    updateTaskNumbers();
-    actualDate();
-    date();
-  });
+//intialize all dynamic functions
+async function summaryInit() {
+  await loadedTaskstoBoard();
+  countAllTasks();
+  countAllToDOs();
+  countAllInProgress();
+  countAllAwaitFeedback();
+  countAllDone();
+  countTaskUrgent();
+  getCurrentDate();
 }
 
-/**
- * Displays a greeting to the user.
- * This function changes the innerHTML of the HTML element with the ID 'greet-user' to the provided name.
- * This results in a visible greeting on the webpage that includes the user's name.
- */
-function greetUser(name) {
-  document.getElementById("greet-user").innerHTML = name;
+// summary of all tasks
+function countAllTasks() {
+  let summaryAllTasks = document.getElementById('taskInBoard');
+  let summaryAllTasksMobile = document.getElementById('summaryAllTasksMobile');
+  summaryAllTasks.innerHTML = /*html*/ `
+      ${loadedTasks.length}
+  `;
+  summaryAllTasksMobile.innerHTML = /*html*/ `
+  ${loadedTasks.length}
+  `;
 }
 
-/**
- * gets and displays the amount of tasks of 4 different categories
- */
-function updateTaskNumbers() {
-  document.getElementById("tasks-in-board").innerHTML = todos.length;
-  const situations = ["todo", "progress", "awaiting", "done"];
-  for (const situation of situations) {
-    const count = todos.filter((t) => t["situation"] === situation).length;
-    const element = document.getElementById(`${situation}-count`);
-    if (element) {
-      element.innerHTML = count;
-    }
-  }
-  getUrgentTasks();
+// summary of To Do tasks
+function countAllToDOs() {
+  let toDO = loadedTasks.filter((t) => t['status'] == 'todo');
+  let summarytoDos = document.getElementById('toDoInBoard');
+  let summarytoDosMobile = document.getElementById('toDoInBoardMobile');
+  summarytoDos.innerHTML = /*html*/ `
+      ${toDO.length}
+  `;
+
+  summarytoDosMobile.innerHTML = /*html*/ `
+      ${toDO.length}
+  `;
 }
 
-function getUrgentTasks() {
-  let urgents = [];
-  let urgencies = document.getElementById('urgentTasks');
-  for (let i = 0; i < todos.length; i++) {
-    if (todos[i].priority === "urgent") {
-      urgents.push(todos[i].priority)
-    }
-  }
-  urgencies.innerHTML = urgents.length;
+//summary of In Progress tasks
+function countAllInProgress() {
+  let inProgress = loadedTasks.filter((t) => t['status'] == 'progress');
+  let summaryinProgress = document.getElementById('inProgressInBoard');
+  let summaryinProgressMoblie = document.getElementById('summaryinProgressMoblie');
+  summaryinProgress.innerHTML = /*html*/ `
+      ${inProgress.length}
+  `;
+  summaryinProgressMoblie.innerHTML = /*html*/ `
+      ${inProgress.length}
+  `;
 }
 
-/**
- * defines at what time which greeting is displayed
- */
-let today = new Date();
-let curHr = today.getHours();
-
-if (curHr < 4) {
-  greeting = "Get some sleep!";
-} else if (curHr < 12) {
-  greeting = "Good Morning";
-} else if (curHr < 13) {
-  greeting = "LUNCH BREAK!!!";
-} else if (curHr < 18) {
-  greeting = "Good Afternoon";
-} else {
-  greeting = "Good Evening";
+// summary of Await Feedback tasks
+function countAllAwaitFeedback() {
+  let awaitFeedback = loadedTasks.filter((t) => t['status'] == 'feedback');
+  let summaryawaitFeedback = document.getElementById('awaitFeedbackInBoard');
+  let summaryawaitFeedbackMoblie = document.getElementById('summaryawaitFeedbackMoblie');
+  summaryawaitFeedback.innerHTML = /*html*/ `
+      ${awaitFeedback.length}
+  `;
+  summaryawaitFeedbackMoblie.innerHTML = /*html*/ `
+      ${awaitFeedback.length}
+  `;
 }
 
-
-/**
- * displays previously defined greetings
- */
-function date() {
-  let today = document.getElementById("greeting");
-  today.innerHTML = greeting;
+//summary of Done tasks
+function countAllDone() {
+  let done = loadedTasks.filter((t) => t['status'] == 'done');
+  let summaryDone = document.getElementById('doneInBoard');
+  let summaryDoneMoblie = document.getElementById('summaryDoneMoblie');
+  summaryDone.innerHTML = /*html*/ `
+      ${done.length}
+  `;
+  summaryDoneMoblie.innerHTML = /*html*/ `
+  ${done.length}
+`;
 }
 
-function actualDate() {
-  let todayDate = document.getElementById("todays-date");
-  let options = { month: "long", day: "numeric", year: "numeric" };
-  let allDates = gettingAllAvailableDates();
-  let closestDate = checkDistancesOfDates(allDates);
-  todayDate.innerHTML = closestDate.toLocaleDateString("en-EN", options);
+// summary of Urgent tasks
+function countTaskUrgent() {
+  let tasksUrgent = loadedTasks.filter((t) => t['priority'] == 'urgent');
+  let summaryTasksUrgent = document.getElementById('urgentInBoard');
+  let summaryTasksUrgentMobile = document.getElementById('summaryTasksUrgentMobile');
+  summaryTasksUrgent.innerHTML = /*html*/ `
+      ${tasksUrgent.length}
+  `;
+  summaryTasksUrgentMobile.innerHTML = /*html*/ `
+      ${tasksUrgent.length}
+  `;
 }
 
-function gettingAllAvailableDates() {
-  let allDates = [];
-  for (let i = 0; i < todos.length; i++) {
-    allDates.push(new Date(todos[i].deadline));
-    return allDates;
-  }
+// directs user to give html
+function redirectToBoard() {
+  window.location.href = '/board.html';
 }
 
-/**
- * checks all dates in all tasks we got previously and compares with current Date
- * to get the smallest distance between both, so we can set it up on summary
- */
-function checkDistancesOfDates(allDates) {
-  let today = new Date();
-  let smallestDistance = Infinity;
-  for (let i = 0; i < allDates.length; i++) {
-    let date = allDates[i];
-    let distance = Math.abs(today - date);
-    if (distance < smallestDistance) {
-      smallestDistance = distance;
-      closestDate = date;
-      return closestDate;
-    }
-  }
+// get current Date and shows on summary
+function getCurrentDate() {
+  const currentDate = new Date();
+  const formattedDate = currentDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  document.getElementById('currentDateContainerMobile').innerText = formattedDate;
+  document.getElementById('currentDateContainer').innerText = formattedDate;
 }

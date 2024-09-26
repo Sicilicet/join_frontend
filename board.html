@@ -14,101 +14,70 @@
     <link rel="stylesheet" href="style/animations.css" />
     <link rel="stylesheet" href="style/media.css" />
     <link rel="stylesheet" href="style/mobile.css" />
+    <script src="script/database.js"></script>
+    <script src="script/script.js"></script>
+    <script src="script/contacts.js"></script>
+    <script src="script/board.js"></script>
+    <script src="script/board-html.js"></script>
+    <script src="script/board-edit.js"></script>
+    <script src="script/board-extra.js"></script>
+    <script src="script/add-task.js"></script>
+    <script src="script/add-task-subtask.js"></script>
+    <script src="script/add-task-prio.js"></script>
+    <script src="script/add-task-html.js"></script>
   </head>
 
-  <body id="bodyBoard" onload="initBoard()" onclick="hideLogoutBtn()">
-    <header id="header-template"></header>
-
-    <div id="content" class="board-content-main">
+  <body onload="init(), updateHTML()">
+    <div w3-include-html="templates/header.html"></div>
+    <div class="board-content-main">
       <div class="board">
         <h1>Board</h1>
         <div class="inp-container">
-          <input class="find-task-input" type="text" placeholder="Find Task" maxlength="12" id="filterInput" />
-          <div class="strich-gray2"></div>
-          <img class="search-icon" src="img/search-icon.png" alt="" />
-          <button onclick="initTemplateAddTask('todo')" class="button01 buttonAddTask">
-            <p>Add task</p>
-            <b class="plus">+</b>
-          </button>
+          <input type="search" name="" id="findTask" placeholder="Find Task" oninput="searchTasks()" />
+          <button onclick="openAddTaskForm(), saveStatus('toDo')" class="button01 buttonAddTask">Add task +</button>
         </div>
       </div>
 
       <div class="box-container">
-        <div
-          class="box-container-child"
-          ondragleave="endDrap('todo')"
-          ondragover="allowDrop(event, 'todo')"
-          ondrop="changePos('todo'), endDrop()"
-        >
+        <div class="box-container-child">
           <div class="box-container-column">
             <p>To do</p>
-            <img class="change-color2" src="img/plus-button.png" alt="" onclick="initTemplateAddTask('todo')" />
+            <img class="change-color2" src="img/plus-button.png" alt="" onclick="openAddTaskForm(), saveStatus('todo')" />
           </div>
-          <div id="todo"></div>
-          <div id="dragdrop_todo" class="dragdrop"></div>
+          <div id="todoListContainer" class="dragdrop" ondrop="moveTo('todo')" ondragover="allowDrop(event)"></div>
         </div>
 
-        <div
-          class="box-container-child"
-          ondragover="allowDrop(event, 'progress')"
-          ondragleave="endDrap('progress')"
-          ondrop="changePos('progress'), endDrop()"
-        >
+        <div class="box-container-child">
           <div class="box-container-column">
             <p>In progress</p>
-            <img class="change-color2" src="img/plus-button.png" alt="" onclick="initTemplateAddTask('progress')" />
+            <img class="change-color2" src="img/plus-button.png" alt="" onclick="openAddTaskForm(), saveStatus('progress')" />
           </div>
-          <div id="progress"></div>
-          <div id="dragdrop_progress" class="dragdrop"></div>
+          <div id="progressListContainer" class="dragdrop" ondrop="moveTo('progress')" ondragover="allowDrop(event)"></div>
         </div>
 
-        <div
-          class="box-container-child"
-          ondragleave="endDrap('awaiting')"
-          ondragover="allowDrop(event, 'awaiting')"
-          ondrop="changePos('awaiting'), endDrop()"
-        >
+        <div class="box-container-child">
           <div class="box-container-column">
             <p>Awaiting Feedback</p>
-            <img class="change-color2" src="img/plus-button.png" alt="" onclick="initTemplateAddTask('awaiting')" />
+            <img class="change-color2" src="img/plus-button.png" alt="" onclick="openAddTaskForm(), saveStatus('feedback')" />
           </div>
-          <div id="awaiting"></div>
-          <div id="dragdrop_awaiting" class="dragdrop"></div>
+          <div id="awaitFeedbackListContainer" class="dragdrop" ondrop="moveTo('feedback')" ondragover="allowDrop(event)"></div>
         </div>
 
-        <div
-          class="box-container-child"
-          ondragleave="endDrap('done')"
-          ondragover="allowDrop(event, 'done')"
-          ondrop="changePos('done'), endDrop()"
-        >
+        <div class="box-container-child">
           <div class="box-container-column">
             <p>Done</p>
-            <img class="change-color2" src="img/plus-button.png" alt="" onclick="initTemplateAddTask('done')" />
+            <img class="change-color2" src="img/plus-button.png" alt="" onclick="openAddTaskForm(),saveStatus('done')" />
           </div>
-          <div id="done"></div>
-          <div id="dragdrop_done" class="dragdrop"></div>
+          <div id="doneListContainer" class="dragdrop" ondrop="moveTo('done')" ondragover="allowDrop(event)"></div>
         </div>
       </div>
+    </div>
 
-      <div id="addTask" class="overlay">
-        <div class="background" onclick="closeTemplateAddTask()"></div>
-        <div id="add-task-overlay" class="overlay-content">
-          <div class="add-task-template" id="add-task-template"></div>
-        </div>
+    <div id="slide-form-add-task">
+      <div id="slide-form-close-btn" onclick="closeAddTaskForm()">
+        <img src="img/cross-icon.png" alt="" />
       </div>
+      <div id="task-form"></div>
     </div>
-    <div id="taskDetail" class="overlay">
-      <div class="background" onclick="closeTemplateBoardDetails()"></div>
-      <div class="BoardDetailcontent">
-        <div id="BoardDetail" class="BoardDetail"></div>
-      </div>
-    </div>
-    <script src="script/array.js"></script>
-    <script src="script/contacts.js"></script>
-    <script src="script/board.js"></script>
-    <script src="script/script.js"></script>
-    <script src="script/add-task.js"></script>
   </body>
 </html>
-

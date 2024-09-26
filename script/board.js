@@ -1,355 +1,406 @@
-/**
- * initializes the Board page
- */
-function initBoard() {
-  showHeaderTemplate().then(() => {
-    CurrentlyActiveWebpage('board.html', 'navBoard');
-    displayTasksInBoard();
-    document.getElementById('filterInput').addEventListener('keyup', filterTasks);
-  });
-}
+let loadedTasks = [];
+let currentDraggedElement;
+let currentDraggedElementID; 
+// let currentAssignedContacts;
+// let currentTodoId = '';
+
 
 /**
- * initializes the add task template with the new situation (todo, progress, awaiting, done)
+ * Saves the status of an element.
+ * @param {string} Elementstatus - The status to be saved.
  */
-function initTemplateAddTask(situation) {
-  addMoveOverlay('add-task-overlay', 'addTask', 'bodyBoard');
-  showAddTaskTemplate().then(() => {
-    theSituationIs(situation);
-    addAvailableCategories();
-    assignToOptions();
-    changeFunctionsOnTemplateButtons();
-    setMinDate();
-  });
-}
+function saveStatus(Elementstatus){
+    lastStatus = Elementstatus
+};
+
 
 /**
- * displayes all tasks from localstorage in board
+ * Loads tasks from storage to the board asynchronously.
  */
-function displayTasksInBoard() {
-  cleanWorkBoardspaces();
-  for (let i = 0; i < todos.length; i++) {
-    isSituationSituation(i);
-    displayTasksCategories(i);
-    displayProgressbar(i);
-    displayTasksTeammates(i);
-  }
+async function loadedTaskstoBoard() {
+    loadedTasks = await getTasks();
 }
 
-/** tiding up by emptying the board */
-function cleanWorkBoardspaces() {
-  emptyInnerHTML('todo');
-  emptyInnerHTML('progress');
-  emptyInnerHTML('awaiting');
-  emptyInnerHTML('done');
-}
 
 /**
- * sorting array elements by their work status (situation) and generating afterwards specific HTML Code
- * @param {*} i - the arrays index
+ * Updates the HTML content of the board.
+ * @async
  */
-function isSituationSituation(i) {
-  if (todos[i].situation === 'todo') {
-    generateTodoHTML(i);
-  } else if (todos[i].situation === 'progress') {
-    generateTodoHTML(i);
-  } else if (todos[i].situation === 'awaiting') {
-    generateTodoHTML(i);
-  } else if (todos[i].situation === 'done') {
-    generateTodoHTML(i);
-  }
+async function updateHTML() {
+    await loadedTaskstoBoard();
+    const searchInput = document.getElementById('findTask').value.toLowerCase();
+    await initTaskData();
+    renderTasksByStatus(loadedTasks, "todo", "todoListContainer");
+    renderTasksByStatus(loadedTasks, "progress", "progressListContainer");
+    renderTasksByStatus(loadedTasks, "feedback", "awaitFeedbackListContainer");
+    renderTasksByStatus(loadedTasks, "done", "doneListContainer");
+    generateEmtyTaskFormHTML();
+
 }
 
-/**
- * generates the html of tasks in board
- */
-function generateTodoHTML(i) {
-  document.getElementById(todos[i].situation).innerHTML += `
-      <div id="task${i}" draggable="true" ondragstart="startdragging(${i})" onclick="displayTaskBoardDetail(${i})" class="BoardTask">
-          <div class="TasksCategories" id="taskCategories${i}"></div>
-          <div class="BoardText">
-            <h4>${todos[i].title}</h4>
-            <p>${todos[i].description}</p>
-          </div>
-          <div id="progressbar${i}" class="progressbar-container"></div>
-          <div class="prio-container">
-              <div id="Boardteammates${i}" class="Boardteammates"></div>
-              <div id="Board-Task${i}"></div>
-          </div>
-      </div>`;
+
+// renders the different tasks
+async function renderToDoTask(loadedTasks) {
+    renderTasksByStatus(loadedTasks, "todo", "todoListContainer");
+    c
+  } 
+function renderInProgressTask(loadedTasks) {
+    renderTasksByStatus(loadedTasks, "progress", "progressListContainer");
 }
-
-/**
- * displaying the selected categories for each task from array
- * @param {*} i - the  specific index of the task
- */
-function displayTasksCategories(i) {
-  emptyInnerHTML('taskCategories' + i);
-  for (let j = 0; j < todos[i].category.length; j++) {
-    document.getElementById('taskCategories' + i).innerHTML += `
-      <div class="BoardCategory" style=background-color:${categories[todos[i].category[j]].color}>
-        <p>${categories[todos[i].category[j]].name}</p>
-      </div>`;
-  }
+function renderAwaitFeedbackTask(loadedTasks) {
+    renderTasksByStatus(loadedTasks, "feedback", "awaitFeedbackListContainer");
 }
-
-/**
- * generates the html of the progressbar
- * @param {*} i - index of specific task
- */
-function displayProgressbar(i) {
-  if (todos[i].subtasks && todos[i].subtasks.length > 0) {
-    emptyInnerHTML('progressbar' + i);
-    document.getElementById('progressbar' + i).innerHTML += `
-      <div class="progressbar">
-        <div class="progressbar-progress" id="progressbar-progress${i}"></div>
-      </div>
-      <p id="progressbarTask"${i}>${todos[i].checkedSubtasks.length}/${todos[i].subtasks.length} Done</p>`;
-    styleProgressbar(i);
-    modifyPriorityIconInTask(i);
-  }
+function renderDoneTask(loadedTasks) {
+    renderTasksByStatus(loadedTasks, "done", "doneListContainer");
 }
+  
 
-/**
- * styling the progressbar by checked subtasks and individualizes the percentage of its width
- * @param {*} i - index of specific task
- */
-function styleProgressbar(i) {
-  let progresswidth = progressbarProgress(i);
-  document.getElementById(`progressbar-progress` + i).style.width = progresswidth + '%';
-}
-
-/**
- * counts checked checkmarks for subtasks from array
- * and calculates the percentage of them based on all subtasks
- * @param {*} i - index of task in array
- * @returns perCentage is % of div Container Color for Progressbar - the height to be exact
- */
-function progressbarProgress(i) {
-  let checkedSubtasks = todos[i].checkedSubtasks.length;
-  let maxCheckboxes = todos[i].subtasks.length;
-  let perCentage = (checkedSubtasks / maxCheckboxes) * 100;
-  if (perCentage > 0) {
-    return perCentage;
-  } else {
-    return 0;
-  }
-}
-
-/**
- * displayes the correct image of urgency from array of this specific task
- * @param {*} i - index of specific task
- */
-function modifyPriorityIconInTask(i) {
-  emptyInnerHTML('Board-Task' + i);
-  if (todos[i].priority === 'urgent') {
-    whichImageUrgency(i, 'urgent', `<img src="img/urgent.icon2.png" alt="" />`);
-  } else if (todos[i].priority === 'medium') {
-    whichImageUrgency(i, 'medium', `<img src="img/urgent-icon3.png" alt="" />`);
-  } else if (todos[i].priority === 'low') {
-    whichImageUrgency(i, 'low', `<img src="img/urgent-icon4.png" alt="" />`);
-  }
-}
-
-//...
-function whichImageUrgency(i, priority, picture) {
-  setBackgroundColorProgressbar(i, priority);
-  document.getElementById('Board-Task' + i).innerHTML = picture;
-}
-
-/** giving the progressbar the color of the specific priority */
-function setBackgroundColorProgressbar(i, urgency) {
-  document.getElementById(`progressbar-progress` + i).classList.add(urgency);
-}
-
-/**
- * displayes the selectes teammates from the task
- * @param {*} i - index of specific task
- */
-function displayTasksTeammates(i) {
-  emptyInnerHTML('Boardteammates' + i);
-  for (let k = 0; k < todos[i].teammates.length; k++) {
-    document.getElementById('Boardteammates' + i).innerHTML += `
-    <div title="${contacts[todos[i].teammates[k]].firstName} ${
-      contacts[todos[i].teammates[k]].lastName
-    }" class="BoardTaskTeammates" style=background-color:${contacts[todos[i].teammates[k]].color}>
-      ${contacts[todos[i].teammates[k]].initials}
-    </div>`;
-  }
-}
-
-/**
- * generating the html of the tasks in detail after clicking on the task
- * @param {*} i - index of specific task
- */
-function displayTaskBoardDetail(i) {
-  openOverlay('taskDetail');
-  document.getElementById('bodyBoard').classList.add('dontScoll');
-  emptyInnerHTML('BoardDetail');
-  document.getElementById('BoardDetail').innerHTML = `
-      <div class="closingCross" onclick="closeTemplateBoardDetails()">+</div>
-      <div id="BoardDetailCategory${i}" class="BoardDetailCategory"></div>
-        <h1>${todos[i].title}</h1>
-        <p style="font-size: 20px;">${todos[i].description}</p>
-        <div class="BoardDetailDate">
-          <p style="font-weight:700; font-size:21px"><b>Due date:</b></p>
-          <p style="font-size:20px;">${todos[i].deadline}</p>
-        </div>
-        <div id="BoardDetailPrio${i}" class="BoardDetailPrio"></div>
-        <div class="BoardTaskTeamTrash">
-          <div class="BoardDetailTeamMates">
-            <p style="font-weight:700; font-size:21px"><b>Assigned To: </b></p>
-            <div class="BoardDetailTeam" id="BoardDetailTeam${i}"></div>
-          </div>
-          <div class="BoardDetailTrashEdit">
-            <div onclick="deleteTask(${i})" class="BoardDetailTrash">
-              <img src="img/deletetrashcan.png" alt="">
-            </div>
-            <div onclick="displayEditTask(${i})" class="BoardDetailEdit">
-              <img src="img/pencil-icon-edit.png" alt="">
-            </div>
-          </div>
-        </div> 
-    </div>`;
-  displayCategoriesBoardDetail(i);
-  displayPriorityBoardDetail(i);
-  displayTeamBoardDetail(i);
-}
-
-/**
- * generates html of the categories the seltected task contains
- * @param {*} i - index of specific task
- */
-function displayCategoriesBoardDetail(i) {
-  emptyInnerHTML('BoardDetailCategory' + i);
-  for (let j = 0; j < todos[i].category.length; j++) {
-    document.getElementById('BoardDetailCategory' + i).innerHTML += `
-        <p style=background-color:${categories[todos[i].category[j]].color}>${categories[todos[i].category[j]].name}</p>`;
-  }
-}
-
-/**
- * generates html of the teammates the seltected task contains
- * @param {*} i - index of specific task
- */
-function displayTeamBoardDetail(i) {
-  emptyInnerHTML('BoardDetailTeam' + i);
-  for (let k = 0; k < todos[i].teammates.length; k++) {
-    document.getElementById('BoardDetailTeam' + i).innerHTML += `
-     <div class="BoardDetailTeamTask-help">
-       <div class="BoardDetailTeamTask" style=background-color:${contacts[todos[i].teammates[k]].color}>
-         ${contacts[todos[i].teammates[k]].initials}</div>
-       <div>${contacts[todos[i].teammates[k]].firstName} ${contacts[todos[i].teammates[k]].lastName}</div>
-     </div>`;
-  }
-}
-
-/**
- * generates html of the prioritys the seltected task contains
- * @param {*} i - index of specific task
- */
-function displayPriorityBoardDetail(i) {
-  emptyInnerHTML('BoardDetailPrio' + i);
-  if (todos[i].priority === 'urgent') {
-    whichPriorityHTMLBoardDetail(i, 'urgent', 'Urgent', `<img src="img/urgent.icon2.png" alt=""/>`);
-  } else if (todos[i].priority === 'medium') {
-    whichPriorityHTMLBoardDetail(i, 'medium', 'Medium', '<img src="img/urgent-icon3.png" alt=""/>');
-  } else if (todos[i].priority === 'low') {
-    whichPriorityHTMLBoardDetail(i, 'low', 'Low', '<img src="img/urgent-icon4.png" alt=""/>');
-  } else {
-    whichPriorityHTMLBoardDetail(i, '', 'unset', '');
-  }
-}
-
-function whichPriorityHTMLBoardDetail(i, urgency, Urgency, picture) {
-  document.getElementById('BoardDetailPrio' + i).innerHTML = `
-  <p><b>Priority: </b></p>
-  <div class="BoardDetailPrioTask ${urgency}">
-    ${Urgency}
-    ${picture}
-  </div>
-  `;
-}
-
-/**
- * deleting a task and removing it from array and loacalstorage
- * @param {*} i - index of specific task
- */
-function deleteTask(i) {
-  todos.splice(i, 1);
-  saveInLocalStorage('todos', todos);
-  closeOverlay('taskDetail');
-  displayTasksInBoard();
-}
-
-//...
-function closeTemplateBoardDetails() {
-  closeOverlay('taskDetail');
-  document.getElementById('bodyBoard').classList.remove('dontScoll');
-}
-
-/** DRAG & DROP */
-
-/**
- * defining wich task is dragged
- */
-let currentlyDraggedElement;
-function startdragging(id) {
-  currentlyDraggedElement = id;
-}
-
-/**
- * checks the container where to drop and gives it a border
- */
-function allowDrop(ev, task) {
-  ev.preventDefault();
-  document.getElementById('dragdrop_' + task).classList.add('border');
-}
-
-/**
- * removes the class border, when dragging over another container
- * @param {*} task - todo, progress, awaiting, done
- */
-function endDrap(task) {
-  document.getElementById('dragdrop_' + task).classList.remove('border');
-}
-
-/**
- * removes border, when dragging is over
- */
-function endDrop() {
-  const situations = ['todo', 'progress', 'awaiting', 'done'];
-  for (const situation of situations) {
-    const elements = document.querySelectorAll('#dragdrop_' + situation);
-    elements.forEach((element) => {
-      element.classList.remove('border');
-    });
-  }
-}
-
-/**
- * giving the dragged element a new situation after dropping it
- * @param {*} situation - todo, progress, awaiting, done
- */
-function changePos(situation) {
-  todos[currentlyDraggedElement]['situation'] = situation;
-  saveInLocalStorage('todos', todos);
-  displayTasksInBoard();
-}
-
-/** SEARCH TASKS */
-
-/**
- * search the tasks by filter the titles and its letters and elements
- */
-function filterTasks() {
-  let filterValue = document.getElementById('filterInput').value.toUpperCase();
-  for (let i = 0; i < todos.length; i++) {
-    let taskElement = document.getElementById('task' + [i]);
-    if (todos[i].title.toUpperCase().includes(filterValue) || todos[i].description.toUpperCase().includes(filterValue)) {
-      taskElement.style.display = '';
+//renders tasks by their different status
+function renderTasksByStatus(loadedTasks, status, containerId) {
+    let tasks = loadedTasks.filter((t) => t["status"] === status);
+    let container = document.getElementById(containerId);
+    container.innerHTML = "";
+  
+    if (tasks.length > 0) {
+      for (let index = 0; index < tasks.length; index++) {
+        let element = tasks[index];
+        let elementID = tasks[index].id
+        container.innerHTML += generateTodoHTML(element, elementID);
+       
+      }
     } else {
-      taskElement.style.display = 'none';
+      generateEmtyTodoHTML(container);
     }
   }
+
+
+/**
+ * Returns the category based on the priority.
+ * @param {string} status - The priority for which the category needs to be determined.
+ * @returns {string} - The corresponding category.
+ */
+function getStatusFromTask(status) {
+    if (status === 'todo') {
+        return 'todo';
+    } else if (status === 'progress') {
+        return 'progress';
+    } else if (status === 'feedback') {
+        return 'feedback';
+    } else if (status === 'done') {
+        return 'done';
+    } else {        
+        return 'DefaultCategory';
+    }
+}
+
+
+/**
+ * Updates the priority of an element and executes the moveTo function.
+ * @param {number} elementID - The ID of the element whose priority is to be updated.
+ * @param {string} status - The new priority of the element.
+ */
+async function updateStatusMobile(elementID, status) {
+    dragElement = loadedTasks.filter(id => id.id == elementID);
+    currentDraggedElement = dragElement[0];
+    currentDraggedElementID = dragElement[0].id;
+
+    const category = getStatusFromTask(status);
+    await moveTo(category);
+}
+
+
+/**
+ * Generates HTML for a small progress bar based on open subtasks.
+ * @param {Array} element - The element containing task information.
+ * @returns {string} - The HTML for the progress bar.
+ */
+function progressBarSmallInfoCard(element) {
+    if (element['subtask'].length > 0) {
+        const openSubtasksCount = countOpenSubtasks(element);
+        const progressPercentage = Math.round((openSubtasksCount / element['subtask'].length) * 100);
+        const subTaskCountContainerStyle = element['subtask'].length === 0 ? 'display: none;' : '';
+        const progressBarHTML = `
+            <div class="progressBar">
+                <div class="progressBarFill" style="width: ${progressPercentage}%;"></div>
+            </div>
+            <div id="subTaskCount" style="${subTaskCountContainerStyle}">
+                ${openSubtasksCount}/${element['subtask'].length} Subtasks
+            </div>`;
+        
+        return progressBarHTML;
+    } else {        
+        return '';
+    }
+}
+
+
+/**
+ * Filters the number of subtasks that are done.
+ * @param {Array} element - The element containing task information.
+ * @returns {number} - The count of subtasks that are done.
+ */
+function filterSubTaskDone(element){
+    let subTaskDone =  element['subtask'].filter(subtask => subtask['status'] === 'done').length;
+
+    return subTaskDone;
+}
+
+
+/**
+ * Opens the information card for a specific task.
+ * @param {number} elementID - The ID of the element.
+ */
+function openInfoCard(elementID){    
+    closeAddTaskForm();
+    currentTodoId = elementID;
+    let element = loadedTasks.filter((id) => id["id"] == elementID);
+    let infoCard = document.getElementById("InfoCard");
+  
+    infoCard.innerHTML = generateOpenInfoCardHTML(element, elementID);
+  
+    renderAssignedContactsInfoCard(element[0]);
+    renderSubtasksInfoCard(element[0], elementID);
+}
+
+
+/**
+ * Closes the add task form.
+ */
+async function closeAddTaskForm(){       
+    document.getElementById('slide-form-add-task').style.display = 'none';    
+}
+
+
+/**
+ * Opens the add task form.
+ */
+function openAddTaskForm(){
+    document.getElementById('slide-form-add-task').style.display = 'block';
+    updateMinDate();
+}
+
+
+/**
+ * Updates the created task.
+ */
+async function updateCreatedTask(){
+    await createTask();
+    await updateHTML();
+    closeAddTaskForm();
+}
+
+
+/**
+ * Updates the edited task.
+ * @param {number} elementID - The ID of the element being edited.
+ */
+async function updateEditTask(elementID){
+    await createTask();
+    await deleteTask(elementID);
+}
+
+/**
+ * Updates the edited task.
+ * @param {number} elementID - The ID of the element being edited.
+ */
+async function updateEditedTask(elementID){
+    try {
+    const currentTask = allTasks.filter(task => task.id === elementID)
+    const title = document.getElementById('add-task-title').value;
+    const description = document.getElementById('add-task-description').value;
+    const date = document.getElementById('add-task-date').value;
+    const priority = assignPriority(selectedPriority)
+    const category = selectedCategory;
+    const subtasks = await getSubtasks();
+    let subtask = subtasks.filter(task => task.todo_item === elementID)
+    let currentAssignedContacts = currentTask[0].users;
+    let matchingUserIds = selectedUsersForTask.map(user => user.id);
+    let updatedAssignedContacts = [...currentAssignedContacts, ...matchingUserIds];
+    updatedAssignedContacts = [...new Set(updatedAssignedContacts)];
+    renderAssignableContactsEdit(elementID);
+    await updateTodo(title, description, date, priority, updatedAssignedContacts, category, subtask, currentTask[0].id)
+    await updateHTML();
+    location.reload();
+    } catch (error){
+        console.error('wtf', error)
+    }
+}
+
+
+async function removeUserFromTask(user){
+    const currentTask = allTasks.filter(task => task.id === currentTodoId);
+    const title = document.getElementById('add-task-title').value;
+    const description = document.getElementById('add-task-description').value;
+    const date = document.getElementById('add-task-date').value;
+    const priority = currentTask.priority;
+    const category = selectedCategory;
+    const subtasks = await getSubtasks();
+    let subtask = subtasks.filter(task => task.todo_item === currentTodoId);
+    let currentAssignedContacts = currentTask[0].users; // id's
+    const updatedAssignedContacts = currentAssignedContacts.filter(contactId => contactId !== user[0].id);
+    renderAssignableContactsEdit(currentTodoId);
+    await updateTodo(title, description, date, priority, updatedAssignedContacts, category, subtask, currentTask[0].id)
+    await updateHTML();
+    // location.reload();
+}
+
+/**
+ * Handles the selection/deselection of an assigned contact for a specific task.
+ * @param {string} elementID - The unique identifier of the task element.
+ * @param {number} index - The index of the contact.
+ * @returns {void} - The function does not return a value.
+ */
+function selectAssignedContact(elementID, index){
+    let contact = document.getElementById(`contact-${index}`);
+    const assignedContact = selectedContacts;
+    const taskIndex = allTasks.findIndex(task => task.id === elementID);
+    if (taskIndex === -1) {
+        return;
+    }
+    if (contact.classList.contains('selectedContact')) {
+        const combinedAssignedContacts = [...allTasks[taskIndex]['user'], ...['user']];
+        const uniqueAssignedContacts = [...new Set(combinedAssignedContacts)];
+
+        allTasks[taskIndex]['user'] = uniqueAssignedContacts;
+
+    } 
+    else {
+        const existingContactIndex = allTasks[taskIndex]['user'].indexOf(assignedContact);
+        allTasks[taskIndex]['user'].splice(existingContactIndex, 1);
+
+    }  
+    renderAssignableContactsEdit(elementID);
+}
+
+/**
+ * Deletes a task.
+ * @param {number} elementID - The ID of the element being deleted.
+ */
+async function deleteTask(elementID) {
+        await deleteTodo(elementID)
+        closeTaskPopup();
+        await updateHTML();
+}
+
+
+/**
+ * Opens the edit task form for a specific task.
+ * @param {number} elementID - The ID of the element being edited.
+ */
+async function editTask(elementID){
+    // currentTodoId = elementID;
+    const allSubtasks = await getSubtasks();
+    const allTodos = await getTasks();
+    const element = allTodos.filter(task => task.id  === elementID);
+    let infoCard = document.getElementById('InfoCard');
+    selectedPriority = element[0].priority
+    infoCard.innerHTML =  openEditTaskForm(element, elementID);
+    currentTodoId = elementID
+    let subtasks = allSubtasks.filter(task => task.todo_item === elementID);
+    if (subtasks.length > 0) {
+        for (let i = 0; i < subtasks.length; i++) {
+            document.getElementById('add-task-subtask-list').innerHTML += subtaskListInnerHTML(i, subtasks);
+        }
+
+    }
+}
+
+
+/**
+ * Counts the number of open subtasks.
+ * @param {Array} element - The element containing task information.
+ * @returns {number} - The count of open subtasks.
+ */
+function countOpenSubtasks(element) {
+    let subTaskDone =  element['subtask'].filter(subtask => subtask['status'] === 'done').length;
+
+    if (element['subtask'] && element['subtask'].length > 0) {
+        return subTaskDone
+    } else {
+        return 0;
+    }
+}
+
+
+/**
+ * Capitalizes the first letter of each word in a text.
+ * @param {string} text - The input text.
+ * @returns {string} - The text with first letters capitalized.
+ */
+function getFirstLettersUppercase(text) {
+    if (!text) return '';
+    return text.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+}
+
+
+/**
+ * Gets the initials from a full name.
+ * @param {string} fullName - The full name.
+ * @returns {string} - The initials.
+ */
+function getInitials(fullName) {
+    // console.log(fullName)
+    // fullName = String(fullName)
+    if (fullName.includes(" ")){
+        const nameParts = fullName.split(' ');
+        const initials = nameParts.map(part => part.charAt(0)).join('');
+        return initials;
+
+    } else {
+        const initials = fullName.charAt(0)
+        return initials;
+    }
+}
+
+
+/**
+ * Reverses the date format.
+ * @param {string} originalDate - The original date.
+ * @returns {string} - The reversed date.
+ */
+function reverseDate(originalDate) {
+    const parts = originalDate.split('-');
+    const reversedParts = parts.reverse();
+    const reversedDate = reversedParts.join('/');
+    return reversedDate;
+}
+
+/**
+ * Searches for tasks.
+ */
+function searchTasks() {
+    updateHTML();
+}
+
+
+/**
+ * Filters an array of tasks based on a search input by matching against task titles and descriptions.
+ * @param {Array} tasks - The array of tasks to be filtered.
+ * @param {string} searchInput - The search input to match against task titles and descriptions.
+ * @returns {Array} - The filtered array of tasks that match the search input.
+ */
+function filterTasksBySearch(tasks, searchInput) {
+    return tasks.filter(task =>
+        (task.title && task.title.toLowerCase().includes(searchInput)) ||
+        (task.description && task.description.toLowerCase().includes(searchInput))
+    );
+}
+
+/**
+ * Closes the task popup.
+ */
+function closeTaskPopup() {
+    const popup = document.querySelector('.popup');
+    if (popup) {
+        popup.remove();
+    }
+}
+
+
+/**
+ * Prevents closing of open infocard div.
+ * @param {Event} event - The event.
+ */
+function doNotClose(event) {
+    event.stopPropagation();
 }

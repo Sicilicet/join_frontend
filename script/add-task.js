@@ -1,549 +1,423 @@
-/**
- * initializes the Add Task Template, checks which webpage is currently on, to know which animation should be played
- * getting the situation to know, where to place it
- * clearing local storage to start new
- * adding available categories from storage
- * setting the min date for calender to see only future dates
- * @param {*} situation gives the task the situation (todo, progress, awaiting, done) so it can be displayed correct in board
- */
+let allTasks = [];
+let allContacts = [];
+let selectedPriority;
+let selectedContact;
+let selectedContacts = [];
+let selectedCategory;
+let subtasks = [];
+let lastStatus = 'todo';
+let searchQuery = '';
+let currentTodoId = '';
+let selectedUsersForTask = [];
 
-function initAddTask(situation) {
-  showHeaderTemplate().then(() => {
-    CurrentlyActiveWebpage('add-task.html', 'navAddTask');
-    showAddTaskTemplate().then(() => {
-      theSituationIs(situation);
-      clearLocalStorage();
-      addAvailableCategories();
-      assignToOptions();
-      setMinDate();
-    });
-  });
-}
-
-/** fetching the Add Task template*/
-async function showAddTaskTemplate() {
-  const response = await fetch('templates/add-task.html');
-  const template = await response.text();
-  document.getElementById('add-task-template').innerHTML = template;
-}
-
-/**adding all the available categories from storage */
-function addAvailableCategories() {
-  emptyInnerHTML('available-categories');
-  for (let i = 0; i < categories.length; i++) {
-    document.getElementById('available-categories').innerHTML += `
-    <lable class="input-options-contacts">
-      <div class="accept-new-category">
-      <div class="circle" style="background-color: ${categories[i].color}"></div>
-      ${categories[i].name}
-      </div>
-      <input class="input-cate" onclick="displaySelectedCategories()" type="checkbox" id="category${i}" value="${i}">
-      <span class="checkmark"></span>
-    </lable>
-    `;
-  }
-}
 
 /**
- * saving new categories from input and push it into storage
+ * Initializes task data by loading contacts, tasks, and setting up the user interface. *
+ * @async
+ * @function
  */
-function saveNewCategory() {
-  let color = document.getElementById('color-select').value;
-  let category = formValidation('add-new-category', 'submitCategoryInput');
-  if (category.length >= 3) {
-    let newCategory = {
-      name: category,
-      color: color,
+async function initTaskData() {
+    await loadContacts();
+    await loadTasks();
+    subtasks = await getSubtasks();
+    if (document.getElementById('add-task-contacts-to-assigne') != null ){
+    document.getElementById('add-task-contacts-to-assigne').innerHTML = renderAssignableContacts();
+    }
+    // allTasks.forEach(task => {
+    //     changePriority(task.priority);
+    // });
+    updateMinDate();
+}
+
+
+/**
+ * Generates a unique task ID based on the current timestamp and a random number.
+ * @param {Array<number>} existingIDs - An array of existing task IDs to check for uniqueness.
+ * @returns {number} - A unique task ID.
+ * @function
+ */
+function generateTaskID(existingIDs) {
+    let isUnique = false;
+    let newID;
+    while (!isUnique) {
+        const timestamp = new Date().getTime();
+        const random = Math.floor(Math.random() * 1000);
+        newID = timestamp + random;
+        isUnique = !existingIDs.includes(newID);
+    }
+    return newID;
+}
+
+
+/**
+ * Creates a new task with the provided details and adds it to the task list.
+ * @async
+ * @function
+ * @throws {Alert} - Displays alerts for missing priority or category selections.
+ */
+async function createTask() {
+    const newTask = {
+        title: document.getElementById('add-task-title').value,
+        description: document.getElementById('add-task-description').value,
+        date: document.getElementById('add-task-date').value,
+        priority: assignPriority(selectedPriority),
+        assignedContact: selectedContacts.map(contact => contact.id),
+        category: selectedCategory,
+        subtask: subtaskArray,
+        status: lastStatus
     };
-    categories.push(newCategory);
-    saveInLocalStorage('categories', categories);
-    document.getElementById('add-new-category').value = '';
-    addAvailableCategories();
-    displaySelectedCategories();
-  }
+
+    if (!selectedCategory) {
+        alertCategory(selectedCategory);
+        return;
+    }
+    try {
+        
+        allTasks.push(newTask);
+        await setTodo(newTask.title, newTask.description, newTask.date, 
+            newTask.priority, newTask.assignedContact, newTask.category,
+            newTask.status, newTask.subtask);
+    } catch (error){
+        console.log('kein neues todo', error)
+    }
+
+    if (window.location.href.endsWith('add_task.html')) {
+        taskAddedPopup();
+        setTimeout(function () {
+            window.location.href = 'board.html';
+        }, 800);
+    }
+    clearForm();
+
 }
 
+
 /**
- * displaying  all the teammates we can assign this task to, getting them from storage
+ * Displays or hides an alert for the task category based on the provided selection.
+ * @param {boolean} selectedCategory - Indicates whether a category is selected or not.
+ * @returns {void} - The function does not return a value.
  */
-function assignToOptions() {
-  emptyInnerHTML('assign-to');
-  for (let i = 0; i < contacts.length; i++) {
-    if (contacts[i].firstName == 'deleted') {
-      continue
+function alertCategory(selectedCategory) {
+    let category = document.getElementById('add-task-category-alert');
+    if (selectedCategory) {
+        removeAlertCategory();
     } else {
-      document.getElementById('assign-to').innerHTML += `
-    <lable class="input-options-contacts">
-      ${contacts[i].firstName} ${contacts[i].lastName}
-      <input class="input-teamMates" onclick="displaySelectedTeammates()" type="checkbox" value="${i}">
-      <span class="checkmark"></span>
-    </lable>
-    `;
+        category.classList.remove('d-none');
     }
-  }
 }
+
 
 /**
- * showing selected priority in task by adding specific CSS classes
- * urgent, medium, low
+ * Removes the alert for the task category by hiding the corresponding DOM element.
+ * @returns {void} - The function does not return a value.
  */
-let priorities = [];
-function setAndTogglePriorities(priority, not1, not2) {
-  let prioContainer = document.getElementById(priority);
-  let notPrioContainer1 = document.getElementById(not1);
-  let notPrioContainer2 = document.getElementById(not2);
-  if (prioContainer.classList.contains(priority)) {
-    prioContainer.classList.remove(priority);
-    priorities = priorities.filter((item) => item !== priority);
-  } else {
-    prioContainer.classList.add(priority);
-    notPrioContainer1.classList.remove(not1);
-    notPrioContainer2.classList.remove(not2);
-    priorities = [priority];
-  }
+function removeAlertCategory() {
+    let category = document.getElementById('add-task-category-alert');
+    category.classList.add('d-none');
 }
+
 
 /**
- * by closing the window without saving, all the selction should be removed
+ * Updates the minimum date of the task input to the current date.
+ * @async
+ * @function
  */
-function unsetPriorityOfTask() {
-  document.getElementById('urgent').classList.remove('urgent');
-  document.getElementById('medium').classList.remove('medium');
-  document.getElementById('low').classList.remove('low');
-}
-
-/**
- * create new task by identifying the tasks array elements
- * first and last - open and close dropdown, so its content is available
- */
-function createTask() {
-  downTheDropdown();
-  let situation = currentSituation[0];
-  let title = formValidation('title-input', 'submitTitleInput');
-  let description = document.getElementById('description-input').value;
-  let category = getCheckedCheckboxes('input-cate');
-  let teammates = getCheckedCheckboxes('input-teamMates');
-  let dueDate = formValidation('date-input', 'submitDateInput');
-  let priority = priorities[0];
-  let subtasks = JSON.parse(localStorage.getItem('subtasks'));
-  let checkedSubtasks = getCheckedCheckboxes('input-subtask');
-  undownTheDropdown();
-  isValidInputCreateTask(situation, title, description, category, teammates, dueDate, priority, subtasks, checkedSubtasks);
-}
-
-/**
- * validating the input of title and dueDate, the only two, which are neccassary
- * @param {*} situation see above
- * @param {*} title see above
- * @param {*} description see above
- * @param {*} category see above
- * @param {*} teammates see above
- * @param {*} dueDate see above
- * @param {*} priority see above
- * @param {*} subtasks see above
- * @param {*} checkedSubtasks see above
- */
-function isValidInputCreateTask(situation, title, description, category, teammates, dueDate, priority, subtasks, checkedSubtasks) {
-  if (title.length >= 3 && dueDate.length >= 3) {
-    whatAndWhereToPushCreateTask(situation, title, description, category, teammates, dueDate, priority, subtasks, checkedSubtasks);
-    saveInLocalStorage('todos', todos);
-    localStorage.removeItem('priorities');
-    currentSituation = [];
-    whichWindow();
-  }
-}
-
-/** push the new created task after validation into array */
-function whatAndWhereToPushCreateTask(situation, title, description, category, teammates, dueDate, priority, subtasks, checkedSubtasks) {
-  let newTask = {
-    situation: situation,
-    title: title,
-    description: description,
-    category: category,
-    teammates: teammates,
-    deadline: dueDate,
-    priority: priority,
-    subtasks: subtasks,
-    checkedSubtasks: checkedSubtasks,
-  };
-  todos.push(newTask);
-}
-
-
-let currentSituation = [];
-function theSituationIs(situation) {
-  currentSituation.push(situation);
-}
-
-/**
- * getting all the checked inputs of categories and teammates
- * @param {*} whichInput categories and teammates
- * @returns all the checked check boxes
- */
-function getCheckedCheckboxes(whichInput) {
-  let checkedCheckboxes = [];
-  let checkedBoxes = document.querySelectorAll(`input.${whichInput}:checked`);
-  checkedBoxes.forEach((checkbox) => {
-    checkedCheckboxes.push(checkbox.value);
-  });
-  return checkedCheckboxes;
-}
-
-/**
- * displayes the selected categories into another container
- */
-function displaySelectedCategories() {
-  let checkedCategoryCheckboxes = getCheckedCheckboxes('input-cate');
-  emptyInnerHTML('selected-categories');
-  for (let i = 0; i < checkedCategoryCheckboxes.length; i++) {
-    document.getElementById('selected-categories').innerHTML += `
-      <div class="circle" style="background-color: ${categories[checkedCategoryCheckboxes[i]].color}"></div>
-    `;
-  }
-}
-
-/**
- * displayes the selected teammates into another container
- */
-function displaySelectedTeammates() {
-  let checkedTeamCheckboxes = getCheckedCheckboxes('input-teamMates');
-  emptyInnerHTML('selected-teammates');
-  for (let i = 0; i < checkedTeamCheckboxes.length; i++) {
-    document.getElementById('selected-teammates').innerHTML += `
-      <div class="circle" style="background-color: ${contacts[checkedTeamCheckboxes[i]].color}">
-        <span>${contacts[checkedTeamCheckboxes[i]].initials}</span>
-      </div>
-    `;
-  }
-}
-
-/**
- * for calendar input for dueDate in Task, only the upcoming dates should be available
- */
-function setMinDate() {
-  let dateInput = document.getElementById('date-input');
-  let today = new Date();
-  let formattedToday = today.toISOString().split('T')[0];
-  dateInput.min = formattedToday;
-}
-
-/**
- * getting  the subtasks from input and saving them in local storage
- */
-function getSubtasksFromInput() {
-  let subtasks = loadStoredSubtasks();
-  let subtask = formValidation('add-subtask', 'submitSubtaskInput');
-  if (subtask.length >= 3) {
-    let newSubtask = subtask;
-    subtasks.push(newSubtask);
-    saveInLocalStorage('subtasks', subtasks);
-    clearInputSubtasks();
-    displaySubtasks();
-  }
-}
-
-/**
- * loades all the stored subtasks from local stoarge
- * @returns stored subtasks or empty array
- */
-function loadStoredSubtasks() {
-  let storedSubtasks = JSON.parse(localStorage.getItem('subtasks'));
-  if (storedSubtasks) {
-    return storedSubtasks;
-  } else {
-    return [];
-  }
-}
-
-/**
- * empties the localstorage
- */
-function clearLocalStorage() {
-  localStorage.removeItem('subtasks');
-  localStorage.removeItem('NewSubtasksFromEdit');
-  clearInputs();
-  displaySelectedCategories();
-  displaySelectedTeammates();
-  displaySubtasks();
-}
-
-/**
- * displayes all the subtasks, when added
- */
-function displaySubtasks() {
-  let subtasks = loadStoredSubtasks();
-  emptyInnerHTML('subtask');
-  for (let i = 0; i < subtasks.length; i++) {
-    document.getElementById('subtask').innerHTML += `
-    <div class="subtask">
-      <input class="input-subtask" type="checkbox" id="subtask${i}" value="${i}">${subtasks[i]}
-      <span class="checkmark"></span>
-    </div>
-    `;
-  }
-}
-
-/**
- * closing the template of Add Task - tiding up the template
- */
-function closeTemplateAddTask() {
-  clearLocalStorage();
-  clearTextarea();
-  unsetPriorityOfTask();
-  rechangeButtonAddTask();
-  removeMoveOverlay('add-task-overlay', 'addTask', 'bodyBoard');
-}
-
-/**
- * removes the move animation and popup by closing, when task is added
- */
-function removeMoveOverlayTaskAdded(id, background) {
-  document.getElementById(id).classList.remove('move-overlay-animation');
-  document.getElementById('TaskAddedPopup').classList.remove('d-none');
-  document.getElementById('TaskAddedPopup').classList.add('move-task-up');
-  setTimeout(function () {
-    document.getElementById(id).classList.add('close-overlay-animation');
-    setTimeout(() => {
-      closeOverlay(id);
-      closeOverlay(background);
-    }, 450);
-  }, 2000);
-}
-
-/**
- * adds a animation to the popup when task is added and sets a timeout to redirect to another page
- */
-function addMoveSite() {
-  document.getElementById('TaskAddedPopup').classList.remove('d-none');
-  document.getElementById('TaskAddedPopup').classList.add('move-task-up');
-  setTimeout(function () {
-    window.location.href = 'board.html';
-  }, 1400);
-}
-
-
-/** EDIT TASK*/
-/**
- * displayes the task to be edited into add task template
- * @param {*} i - index of specific task
- */
-function displayEditTask(i) {
-  closeOverlay('taskDetail');
-  addMoveOverlay('add-task-overlay', 'addTask', 'bodyBoard');
-  showAddTaskTemplate().then(() => {
-    addAvailableCategories();
-    assignToOptions();
-    fillAddTaskTemplate(i);
-    changeButtonEditTask(i);
-    localStorage.removeItem('NewSubtasksFromEdit');
-  });
-}
-
-/**
- * filles the add task template with data from array
- * @param {*} i  - index of specific task
- */
-function fillAddTaskTemplate(i) {
-  document.getElementById('title-input').value = todos[i].title;
-  document.getElementById('description-input').value = todos[i].description;
-  showCheckedCheckboxesEditTask(i, 'category', 'input-cate');
-  showCheckedCheckboxesEditTask(i, 'teammates', 'input-teamMates');
-  document.getElementById('date-input').value = todos[i].deadline;
-  displayCorrectPriority(i);
-  displaySubtasksEditTask(i);
-  showCheckedCheckboxesEditTask(i, 'checkedSubtasks', 'input-subtask');
-}
-
-/**
- * shows the checked checkboxes 
- * @param {*} i - index of specific task
- * @param {*} arrayElement - categories or teammates
- * @param {*} checkboxesClass - inputs of categories or teammates
- */
-function showCheckedCheckboxesEditTask(i, arrayElement, checkboxesClass) {
-  let checkedValues = todos[i][arrayElement];
-  let checkboxes = document.querySelectorAll(`input.${checkboxesClass}`);
-  checkboxes.forEach((checkbox) => {
-    if (checkedValues.includes(checkbox.value)) {
-      checkbox.checked = true;
+async function updateMinDate() {
+    let today = new Date().toISOString().split('T')[0];
+    if (document.getElementById('add-task-date') != null){
+    document.getElementById('add-task-date').min = today;
+    document.getElementById('add-task-date').value = today;
     }
-  });
 }
+
 
 /**
- * updateing the tasks data and renew its position by rewrite the data
- * @param {*} i - index of specific task
+ * Loads tasks from local storage and populates the 'allTasks' array.f
+ * @async
+ * @function
  */
-function updateTaskData(i) {
-  downTheDropdown();
-  let title = formValidation('title-input', 'submitTitleInput');
-  let description = document.getElementById('description-input').value;
-  let category = getCheckedCheckboxes('input-cate');
-  let teammates = getCheckedCheckboxes('input-teamMates');
-  let dueDate = formValidation('date-input', 'submitDateInput');
-  let priority = priorities[0];
-  let subtasks = pushNewSubtasksIntoSubtasksArray(i);
-  let checkedSubtasks = getCheckedCheckboxes('input-subtask');
-  isValidInputUpdateTask(i, title, description, category, teammates, dueDate, priority, subtasks, checkedSubtasks)
-  undownTheDropdown();
+async function loadTasks() {
+    let allTodos = await getTasks();
+    allTasks = [...allTodos]
 }
+
 
 /**
- * checks if title and dueDate are valid - if so it pushed into local storage
- * @param {*} i - index of specific task
- * @param {*} title  - see above
- * @param {*} description  - see above
- * @param {*} category  - see above
- * @param {*} teammates  - see above
- * @param {*} dueDate  - see above
- * @param {*} priority  - see above
- * @param {*} subtasks  - see above
- * @param {*} checkedSubtasks  - see above
+ * Loads contacts from local storage and populates the 'allContacts' array.
+ * @async
+ * @function
  */
-function isValidInputUpdateTask(i, title, description, category, teammates, dueDate, priority, subtasks, checkedSubtasks) {
-  if (title.length >= 3 && dueDate.length >= 3) {
-    whichIsWhereToPushTask(i, title, description, category, teammates, dueDate, priority, subtasks, checkedSubtasks);
-    saveInLocalStorage('todos', todos);
-    localStorage.removeItem('NewSubtasksFromEdit');
-    priorities = [];
-    NewSubtasksFromEdit = [];
-    displayTasksInBoard();
-    removeMoveOverlay('add-task-overlay', 'addTask', 'bodyBoard');
-  }
+async function loadContacts() {
+    const contacts = await getUsers();
+    allContacts.push(contacts);
 }
 
-//...
-function whichIsWhereToPushTask(i, title, description, category, teammates, dueDate, priority, subtasks, checkedSubtasks) {
-  if (todos[i]) {
-    todos[i].title = title;
-    todos[i].description = description;
-    todos[i].category = category;
-    todos[i].teammates = teammates;
-    todos[i].deadline = dueDate;
-    todos[i].priority = priority;
-    todos[i].subtasks = subtasks;
-    todos[i].checkedSubtasks = checkedSubtasks;
-  }
-}
-
-/** 
- * displayes correct saved priority for specific task
-*/
-function displayCorrectPriority(i) {
-  if (todos[i].priority === 'urgent') {
-    checkForCorrectPriority('urgent', 'medium', 'low');
-  } else if (todos[i].priority === 'medium') {
-    checkForCorrectPriority('medium', 'low', 'urgent');
-  } else if (todos[i].priority === 'low') {
-    checkForCorrectPriority('low', 'medium', 'urgent');
-  }
-}
 
 /**
- * drawes the specific color of selscted priority and add r removes classes from ClassList
- * @param {*} priority - see above
- * @param {*} not1  - see above
- * @param {*} not2  - see above
+ * Generates initials from a full name. *
+ * @param {string} fullName - The full name from which initials are generated.
+ * @returns {string} - The generated initials.
+ * @function
  */
-function checkForCorrectPriority(priority, not1, not2) {
-  document.getElementById(priority).classList.add(priority);
-  document.getElementById(not1).classList.remove(not1);
-  document.getElementById(not2).classList.remove(not2);
-  priorities = [priority];
+function getInitials(fullName) {
+    if (!fullName) {
+        return '';
+    } else {
+        const words = fullName.split(' ');
+        const initials = words.map(word => word.charAt(0).toUpperCase());
+        return initials.join('');
+    }
 }
+
 
 /**
- * displayes all the selected subtasks
- * @param {*} i - index of specific task
+ * Searches for contacts to add based on the input search query. *
+ * @function
  */
-function displaySubtasksEditTask(i) {
-  if (todos[i].subtasks) {
-    emptyInnerHTML('subtask');
-    isThereSubtasksInEditTask(i);
-  } else {
-    displayNewSubtasksEditTask(i);
-  }
+function searchContactToAdd() {
+    searchQuery = document.getElementById('searchbar-add-contacts').value.toLowerCase();
+    const filteredContacts = allContacts[0].filter(contact => contact.username.toLowerCase().startsWith(searchQuery));
+    const content = filteredContacts.map((contact, index) => assignContactsTemplate(contact.username, index)).join('');
+    document.getElementById('add-task-contacts-to-assigne').innerHTML = content;
 }
+
 
 /**
- * generates html of subtasks, which where already saved in tasks
- * @param {*} i - index of specific task
+ * Selects or unselects a contact based on the provided ID and updates the selected contacts array.
+ * @param {number} id - The ID of the contact to be selected or unselected.
+ * @function
  */
-function isThereSubtasksInEditTask(i) {
-  for (let g = 0; g < todos[i].subtasks.length; g++) {
-    document.getElementById('subtask').innerHTML += `
-      <div class="subtask">
-        <input class="input-subtask" type="checkbox" id="subtask${g}" value="${g}">${todos[i].subtasks[g]}
-        <span class="checkmark"></span>
-      </div>
-    `;
-  }
+function selectContact(id) {
+    const filteredContacts = allContacts[0].filter(contact => contact.username.toLowerCase().startsWith(searchQuery));
+    selectedContact = filteredContacts[id];
+    let contact = document.getElementById(`contact-${id}`);
+    const checkboxImage = document.getElementById(`contact-checkbox-${id}`);
+
+    if (contact.classList.contains('selectedContact')) {
+        unselectContact(contact, checkboxImage);
+        let userId = id + 1;
+        selectedContact = allContacts[0].filter(contact => contact.id === userId);
+        removeUserFromTask(selectedContact);
+    } else {
+        selectedContacts.push(selectedContact);
+        selectedUsersForTask.push(selectedContact);
+        contact.classList.add('selectedContact');
+        checkboxImage.src = 'assets/img/add-task/checkbox-checked.png';
+        checkboxImage.style.filter = 'brightness(0) saturate(100%) invert(87%) sepia(14%) saturate(5010%) hue-rotate(541deg) brightness(250%) contrast(155%)';
+    }
 }
+
 
 /**
- * generates the html of new created subtasks by getting the current length of subtasks in the task
- * so we can start from this index on, to give the new subtasks counting index
- * @param {*} i - index of specific task
+ * Renders the HTML content for assignable contacts based on the 'allContacts' array.
+ * @returns {string} - The HTML content for assignable contacts.
+ * @function
  */
-function displayNewSubtasksEditTask(i) {
-  let length = todos[i].subtasks ? todos[i].subtasks.length : 0;
-  emptyInnerHTML('newSubtask');
-  for (let g = length; g < length + NewSubtasksFromEdit.length; g++) {
-    document.getElementById('newSubtask').innerHTML += `
-      <div class="subtask">
-        <input class="input-subtask" type="checkbox" id="subtask${g}" value="${g}">${NewSubtasksFromEdit[g - length]}
-        <span class="checkmark"></span>
-      </div>
-    `;
-  }
+function renderAssignableContacts() {
+    let content = '';
+    for (let i = 0; i < allContacts[0].length; i++) {
+        content += assignContactsTemplate(allContacts[0][i].username, i);
+    }
+    return content;
 }
+
 
 /**
- * gets and pushes new subtasks from input
+ * Unselects a contact by removing the 'selectedContact' class and resetting the checkbox appearance.
+ * @param {HTMLElement} contact - The DOM element representing the contact to be unselected.
+ * @param {HTMLImageElement} img - The checkbox image element associated with the contact.
+ * @function
  */
-let NewSubtasksFromEdit = [];
-function getAndPushNewSubtasksFromInput(i) {
-  let subtaskInput = formValidation('add-subtask', 'submitSubtaskInput');
-  if (subtaskInput.length >= 3) {
-    let newSubtask = subtaskInput;
-    NewSubtasksFromEdit.push(newSubtask);
-    saveInLocalStorage('NewSubtasksFromEdit', NewSubtasksFromEdit);
-    clearInputSubtasks();
-    displayNewSubtasksEditTask(i);
-  }
-  showCheckedCheckboxesEditTask(i, 'checkedSubtasks', 'input-subtask');
+function unselectContact(contact, img) {
+    contact.classList.remove('selectedContact');
+    img.src = 'assets/img/add-task/checkbox.png';
+    img.style.filter = 'none';
+    selectedContact = null;
 }
+
 
 /**
- * pushes new subtasks into the subtasks array
- * @param {*} i - index of specific task
- * @returns the new subtasks array of the upper array "todos"
+ * Handles the selection of a task category, updates the UI, and sets the selected category.
+ * @param {string} selectedTask - The selected task category ('technicaltask', 'userstory', or other).
+ * @returns {string} - The selected task category.
+ * @function
  */
-function pushNewSubtasksIntoSubtasksArray(i) {
-  let NewSubtasksFromEdit = JSON.parse(localStorage.getItem('NewSubtasksFromEdit'));
-  if (NewSubtasksFromEdit && NewSubtasksFromEdit.length > 0) {
-    todos[i].subtasks = todos[i].subtasks ? [...todos[i].subtasks, ...NewSubtasksFromEdit] : [...NewSubtasksFromEdit];
-    localStorage.removeItem('NewSubtasksFromEdit');
-  }
-  return todos[i].subtasks;
+function selectedTask(selectedTask) {
+    document.getElementById('add-task-currently-selected-category').innerHTML = selectedTaskInnerHTML(selectedTask);
+    showAndHideCategories();
+    selectedCategory = selectedTask;
+    return selectedTask;
 }
+
 
 /**
- * gets new category from input and shows the old categories and check them again
+ * Toggles the visibility of the contacts section in the task creation form.
+ * @function
  */
-function getNewCategoryFromInputShowOldInput(i) {
-  saveNewCategory();
-  showCheckedCheckboxesEditTask(i, 'category', 'input-cate');
+function showAndHideContacts() {
+    let selectedContactsMini = document.getElementById('add-task-selected-contacts-mini');
+    let contactBox = document.getElementById('add-task-contacts-to-assigne');
+    let contactDropdown = document.getElementById('add-task-assigne');
+    let contactSearchbarContainer = document.getElementById('searchbar-add-contacts-container');
+    if (contactBox.classList.contains('d-none')) {
+        showContacts(selectedContactsMini, contactBox, contactDropdown, contactSearchbarContainer);
+    } else {
+        hideContacts(selectedContactsMini, contactBox, contactDropdown, contactSearchbarContainer);
+    }
 }
+
 
 /**
- * tiding up the template
+ * Displays the contacts section in the task creation form and updates related UI elements.
+ * @param {HTMLElement} selectedContactsMini - The DOM element representing the mini contacts display.
+ * @param {HTMLElement} contactBox - The DOM element representing the contacts box to be shown.
+ * @param {HTMLElement} contactDropdown - The DOM element representing the contacts dropdown to be hidden.
+ * @param {HTMLElement} contactSearchbarContainer - The DOM element representing the container of the contacts search bar.
+ * @function
  */
-function clearAddTask() {
-  clearLocalStorage();
-  unsetPriorityOfTask();
-  clearTextarea();
-  clearInputs();
+function showContacts(selectedContactsMini, contactBox, contactDropdown, contactSearchbarContainer) {
+    contactBox.classList.remove('d-none');
+    contactDropdown.classList.add('d-none');
+    contactSearchbarContainer.classList.remove('d-none');
+    selectedContactsMini.classList.add('d-none');
 }
 
 
+/**
+ * Hides the contacts section in the task creation form and updates related UI elements.
+ * @param {HTMLElement} selectedContactsMini - The DOM element representing the mini contacts display.
+ * @param {HTMLElement} contactBox - The DOM element representing the contacts box to be hidden.
+ * @param {HTMLElement} contactDropdown - The DOM element representing the contacts dropdown to be shown.
+ * @param {HTMLElement} contactSearchbarContainer - The DOM element representing the container of the contacts search bar.
+ * @function 
+ */
+function hideContacts(selectedContactsMini, contactBox, contactDropdown, contactSearchbarContainer) {
+    if (document.location.pathname.includes('add_task.html') || document.location.pathname.includes('board.html')) {
+        contactBox.classList.add('d-none');
+        contactSearchbarContainer.classList.add('d-none');
+        contactDropdown.classList.remove('d-none');
+        selectedContactsMini.classList.remove('d-none');
+        selectedContactsMini.innerHTML = renderSelectedContactsMini();
+    }
+}
+
+
+/**
+ * Toggles the visibility of the task categories dropdown and updates the arrow indicator.
+ * @function
+ */
+function showAndHideCategories() {
+    let taskBox = document.getElementById('add-task-category-dropdown');
+    let arrowCategories = document.getElementById('arrow-categories');
+    if (taskBox.classList.contains('d-none')) {
+        showCategories(taskBox, arrowCategories);
+    } else {
+        hideCategories(taskBox, arrowCategories);
+    }
+}
+
+
+/**
+ * Displays the task categories dropdown and rotates the arrow indicator.
+ * @param {HTMLElement} taskBox - The DOM element representing the task categories dropdown to be shown.
+ * @param {HTMLElement} arrowCategories - The DOM element representing the arrow indicator for task categories.
+ * @function
+ */
+function showCategories(taskBox, arrowCategories) {
+    taskBox.classList.remove('d-none');
+    arrowCategories.style = 'transform: rotate(180deg);';
+}
+
+
+/**
+ * Hides the task categories dropdown and resets the arrow indicator rotation.
+ * @param {HTMLElement} taskBox - The DOM element representing the task categories dropdown to be hidden.
+ * @param {HTMLElement} arrowCategories - The DOM element representing the arrow indicator for task categories.
+ * @function
+ */
+function hideCategories(taskBox, arrowCategories) {
+    if (document.location.pathname.includes('add_task.html') || document.location.pathname.includes('board.html')) {
+        taskBox.classList.add('d-none');
+        arrowCategories.style = 'transform: rotate(0deg);';
+    }
+}
+
+
+/**
+ * Handles the click event on the document and hides contacts and categories dropdowns.
+ * @param {Event} event - The click event object.
+ * @function
+ */
+function handleClick(event) {
+    let selectedContactsMini = document.getElementById('add-task-selected-contacts-mini');
+    let contactBox = document.getElementById('add-task-contacts-to-assigne');
+    let contactDropdown = document.getElementById('add-task-assigne');
+    let contactSearchbarContainer = document.getElementById('searchbar-add-contacts-container');
+    let taskBox = document.getElementById('add-task-category-dropdown');
+    let arrowCategories = document.getElementById('arrow-categories');
+    if (getComputedStyle(event.target).cursor !== 'pointer') {
+        hideContacts(selectedContactsMini, contactBox, contactDropdown, contactSearchbarContainer);
+        hideCategories(taskBox, arrowCategories);
+    }
+}
+// Add the 'click' event listener to the document, calling the 'handleClick' function
+document.addEventListener('click', handleClick);
+
+
+
+/**
+ * Renders the HTML content for the mini display of selected contacts.
+ * @returns {string} - The HTML content for the mini display of selected contacts.
+ * @function
+ */
+function renderSelectedContactsMini() {
+    let miniContacts = '';
+    let userIds = '';
+    let thisTask = allTasks.filter(task => task.id === currentTodoId)
+    // console.log(allTasks[0])
+
+    if (thisTask.length > 0) {
+        userIds = thisTask[0].users;
+    }   
+    if (!thisTask){
+        let selectedUsers = allContacts[0];
+        for (let i = 0; i < selectedUsers.length; i++) {
+            miniContacts += selectedContactMiniTemplate(getInitials(selectedUsers[i]));
+        }
+    } else {
+    let selectedUsers = allContacts[0].filter(contact => userIds.includes(contact.id));
+    const selectedContacts = selectedUsers.map(user => user.username);
+    if (selectedContacts.length > 0) {
+        for (let i = 0; i < selectedContacts.length; i++) {
+            miniContacts += selectedContactMiniTemplate(getInitials(selectedContacts[i]));
+        }
+    }
+}
+    return miniContacts;
+}
+
+
+/**
+ * Generates the HTML template for a contact in the "Add Task" form.
+ * @param {string} username - The full name of the contact.
+ * @param {number} index - The index of the contact in the list.
+ * @returns {string} - The HTML template for the contact.
+ * @function
+ */
+function assignContactsTemplate(username, index) {
+    const contactFound = selectedContacts.find(c => c.username == username);
+    let selectedClass = '';
+    let checkboxImage = `assets/img/add-task/checkbox.png`;
+    if (contactFound) {
+        selectedClass = 'selectedContact';
+        checkboxImage = 'assets/img/add-task/checkbox-checked.png';
+    }
+
+    const contactElement = document.createElement('div');
+    contactElement.innerHTML = contactElementInnerHTML(index, selectedClass, username, checkboxImage);
+    const checkboxImgElement = contactElement.querySelector(`#contact-checkbox-${index}`);
+    if (contactFound) {
+        checkboxImgElement.style.filter = 'brightness(0) saturate(100%) invert(87%) sepia(14%) saturate(5010%) hue-rotate(541deg) brightness(250%) contrast(155%)';
+    }
+    return contactElement.innerHTML;
+}
