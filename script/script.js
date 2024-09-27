@@ -1,14 +1,18 @@
 /**
- * Handles the image only on index and sign up page.
+ * Loads the animated image.
  */
-if(document.location.pathname.includes("index.html") || document.location.pathname.includes("sign_up.html")){
-    setTimeout(loadImg, 1000);
-}
-window.addEventListener('DOMContentLoaded', (event) => {
-    if (window.location.pathname === '/' || window.location.pathname === '') {
-        window.location.href = '/index.html';
+function loadImg() {
+    let container = document.getElementById('logo-container');
+    let img = document.getElementById('logo-img');
+    img.classList.remove('frontImage');
+    img.classList.add('imgResponsive');
+    if (document.location.pathname.includes('index.html')) {
+      img.src = 'assets/img/logo_blue.png';
+      container.style.zIndex = '8';
+      container.style.backgroundColor = 'white';
+      document.getElementById('login-container').style.display = 'flex';
     }
-});
+  }
 
 
 /**

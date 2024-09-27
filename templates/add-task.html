@@ -1,151 +1,82 @@
-<div id="addTaskForm">
-  <p id="closeXtemplate" class="closeXtemplate" onclick="closeTemplateAddTask()">+</p>
-  <h1 id="headerAddTask">Add Task</h1>
-  <div class="first-container">
-    <div class="child-container-left">
-      <div>
-        <h4>Title</h4>
-        <input
-          required
-          minlength="3"
-          id="title-input"
-          class="title"
-          type="text"
-          placeholder="Enter a title"
-          onclick="closeAllToggle()"
-        />
-        <span id="submitTitleInput" class="submitInputs d-none">Please insert three or more letters. </span>
-      </div>
+<div class="add-task-container"></div>
+    <form onsubmit="createTask(); return false;">
+        <div class="add-task-container-content">
+            <input required class="pointer" type="text" placeholder="Enter a title" id="add-task-title">
 
-      <div>
-        <h4>Description</h4>
-        <textarea
-          id="description-input"
-          type="text"
-          class="description"
-          rows="6"
-          cols="32"
-          placeholder="Enter a Description"
-          onclick="closeAllToggle()"
-        ></textarea>
-      </div>
+            <label for="add-task-description">Description (optional)</label>
+            <textarea class="pointer" type="text" name="add-task-description" id="add-task-description"
+                placeholder="Enter a description"></textarea>
 
-      <div>
-        <h4>Category</h4>
-        <div class="new-category-container">
-          <div
-            class="category"
-            onclick="toggleVisibility('available-categories'), toggleVisibility('category-new-input-submit'), closeToggle('assign-to')"
-          >
-            Select category
-            <img src="img/arrow-down.png" alt="" />
-          </div>
-          <div id="category-new-input-submit" style="display: none">
-            <div id="category-new-input" class="category-new-input">
-              <input id="color-select" class="color-select" type="color" value="#000000" />
-              <input class="input-category" id="add-new-category" type="text" placeholder="Add new category" />
-              <div class="accept-category">
-                <img class="cancel-icon" src="img/cross-icon.png" alt="cancel-icon" onclick="clearInputCategories()" />
-                <div class="strich-gray4"></div>
-                <img id="checkmarkCategory" class="done-icon2" onclick="saveNewCategory()" src="img/done-icon2.png" alt="done-icon" />
-              </div>
+            <label for="add-task-date">Due date</label>
+            <input required class="pointer" type="date" name="add-task-date" id="add-task-date" min="" onclick="updateMinDate()">
+
+            <label for="add-task-priority">Priority (optional)</label>
+            <div id="add-task-priority">
+                <div id="add-task-urgent" class="add-task-priority-box pointer" onclick="changePriority('urgent')">
+                    <div>Urgent</div>
+                    <img src="img/urgent.icon2.png" alt="">
+                </div>
+                <div id="add-task-medium" class="add-task-priority-box pointer" onclick="changePriority('medium')">
+                    <div>Medium</div>
+                    <img src="img/urgent-icon3.png" alt="">
+                </div>
+                <div id="add-task-low" class="add-task-priority-box pointer" onclick="changePriority('low')">
+                    <div>Low</div>
+                    <img src="img/urgent-icon4.png" alt="">
+                </div>
             </div>
-            <span id="submitCategoryInput" class="submitInputs d-none">Please insert three or more letters.</span>
-          </div>
 
-          <div class="available-categories" id="available-categories" style="display: none"></div>
-        </div>
-        <div class="selected-categories">
-          <p>Selected:</p>
-          <div class="selected-categories" id="selected-categories"></div>
-        </div>
-      </div>
+            <label for="add-task-assigne">Assgigned to (optional)</label>
+            <div class="pointer" id="add-task-assigne" onclick="showAndHideContacts()">
+                <div>Select contacts to assgin</div>
+                <img src="img/arrow-down.png" alt="">
+            </div>
+            <div class="d-none searchbar-add-contacts-input-container" id="searchbar-add-contacts-container">
+                <input onkeyup="searchContactToAdd()" class="pointer" type="text" id="searchbar-add-contacts">
+                <img class="rotated-image" src="img/arrow-down.png" alt="" onclick="showAndHideContacts()">
+            </div>
+            <div class="d-none" id="add-task-contacts-to-assigne">
+            </div>
+            <div class="d-none" id="add-task-selected-contacts-mini">
+            </div>
+            <label for="add-task-category">Category</label>
+            <div class="pointer" id="add-task-category" onclick="showAndHideCategories()">
+                <div id="add-task-currently-selected-category">Select task category</div>
+                <img id="arrow-categories" src="img/arrow-down.png" alt="">
+            </div>
+            <div class="d-none" id="add-task-category-dropdown">
+                <div class="add-task-category-dropdown-task" onclick="selectedTask('technical')">Technical Task
+                </div>
+                <div class="add-task-category-dropdown-task" onclick="selectedTask('userstory')">User Story</div>
+            </div>
+            <div class="d-none" id="add-task-category-alert">
+                <span>Please choose a category</span>
+            </div>
+            <label for="add-task-subtask">Subtask (optional)</label>
+            <div id="add-task-subtask-container">
+                <div id="add-task-subtask-input-container">
+                    <input class="pointer" type="text" name="subtask" id="add-task-subtask-input"
+                        placeholder="Add new subtask">
 
-      <div>
-        <h4>Assigned to</h4>
-        <div class="assign-to-main">
-          <div
-            class="assign-to"
-            onclick="toggleVisibility('assign-to'), closeToggle('available-categories'), closeToggle('category-new-input-submit')"
-          >
-            Select contacts to assign
-            <img src="img/arrow-down.png" alt="" />
-          </div>
-          <div class="assign-to-dd" id="assign-to" style="display: none"></div>
-        </div>
-        <div class="selected-categories">
-          <p>Selected:</p>
-          <div class="selected-categories" id="selected-teammates"></div>
-        </div>
-      </div>
-    </div>
+                    <div id="add-task-subtask-image-container">
+                        <img src="img/done-icon2.png" alt="" onclick="holdSubtasks()">
+                    </div>
 
-    <div class="strich-gray3"></div>
+                </div>
+                <div class="d-none" id="add-task-subtask-alert">
+                    <span>You can't add an empty subtask</span>
+                </div>
+                <div>
+                    <ul id="add-task-subtask-list">
+                    </ul>
+                </div>
+            </div>
+        </div>
 
-    <div class="child-container-right">
-      <div>
-        <h4>Due Date</h4>
-        <input
-          required
-          id="date-input"
-          min=""
-          class="title"
-          type="text"
-          onfocus="(this.type='date')"
-          onblur="(this.type='text')"
-          placeholder="Enter a date"
-          onclick="closeAllToggle()"
-        />
-        <span id="submitDateInput" class="submitInputs d-none">Please insert a date. </span>
-      </div>
-
-      <div onclick="closeAllToggle()">
-        <h4>Prio</h4>
-        <div class="difficulty-level">
-          <div onclick="setAndTogglePriorities('urgent', 'medium', 'low')" id="urgent" class="prioContainer">
-            Urgent
-            <img src="img/urgent.icon2.png" alt="" />
-          </div>
-          <div onclick="setAndTogglePriorities('medium', 'urgent', 'low')" id="medium" class="prioContainer medium-margin">
-            Medium
-            <img src="img/urgent-icon3.png" alt="" />
-          </div>
-          <div onclick="setAndTogglePriorities('low', 'urgent', 'medium')" id="low" class="prioContainer">
-            Low
-            <img src="img/urgent-icon4.png" alt="" />
-          </div>
+        <div class="add-task-form-buttons">
+            <button type="button" id="add-task-clear-form" onclick="clearForm()" formnovalidate>Clear X</button>
+            <button id="add-task-create-task"> Create Task <img src="img/done-icon2.png" alt=""></button>            
         </div>
-      </div>
-
-      <div>
-        <h4>Subtasks</h4>
-        <div class="align-Add-Subtask" onclick="closeAllToggle()">
-          <input class="title" type="text" id="add-subtask" placeholder="Add new subtask" />
-          <div class="accept-new-subtask">
-            <img class="cancel-icon" src="img/cross-icon.png" alt="cancel-icon" onclick="clearInputSubtasks()" />
-            <div class="strich-gray4"></div>
-            <img id="checkmarkSubtasks" class="done-icon2" onclick="getSubtasksFromInput()" src="img/done-icon2.png" alt="done-icon" />
-          </div>
-        </div>
-        <span id="submitSubtaskInput" class="submitInputs d-none">Please insert three or more letters. </span>
-        <div class="newsubtasks-subtasks">
-          <div class="display-subtasks" id="subtask"></div>
-          <div class="display-newsubtasks" id="newSubtask"></div>
-        </div>
-      </div>
-      <div class="buttons-add-task-fix">
-        <div id="TaskAddedPopup" class="TaskAddedPopup d-none">
-          <img src="img/task-added.png" alt="" />
-        </div>
-        <button id="clearCancelButton" class="button02" onclick="clearAddTask()">
-          Clear
-          <p style="rotate: 45deg; font-size: 30px; font-weight: 200; padding-bottom: 1px">+</p>
-        </button>
-        <button type="submit" id="createTask" onclick="createTask()" class="button01">
-          Create Task
-          <img class="plus-done" src="img/done.png" alt="" />
-        </button>
-      </div>
-    </div>
-  </div>
+    </form>
+    <div id="successTask" class="addedTaskSuccess"><p>Task added to board</p> <img src="img/task-added.png" alt=""></div>
 </div>

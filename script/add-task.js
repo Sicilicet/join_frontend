@@ -230,7 +230,7 @@ function renderAssignableContacts() {
  */
 function unselectContact(contact, img) {
     contact.classList.remove('selectedContact');
-    img.src = 'assets/img/add-task/checkbox.png';
+    img.src = 'img/checkbox.png';
     img.style.filter = 'none';
     selectedContact = null;
 }
@@ -407,7 +407,7 @@ function renderSelectedContactsMini() {
 function assignContactsTemplate(username, index) {
     const contactFound = selectedContacts.find(c => c.username == username);
     let selectedClass = '';
-    let checkboxImage = `assets/img/add-task/checkbox.png`;
+    let checkboxImage = `img/checkbox.png`;
     if (contactFound) {
         selectedClass = 'selectedContact';
         checkboxImage = 'assets/img/add-task/checkbox-checked.png';

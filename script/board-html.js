@@ -158,12 +158,12 @@ function openEditTaskForm(element, elementID) {
                 <label for="add-task-assigne">Assigned to (optional)</label>
                 <div class="pointer" id="add-task-assigne" onclick="showAndHideContactsEdit(${elementID})">
                     <div>Select contacts to assgin</div>
-                    <img src="/assets/img/arrow_drop_down.png" alt="">
+                    <img src="img/arrow-down.png" alt="">
                 </div>
                 <div class="" id="add-task-selected-contacts-mini">${renderSelectedContactsMiniEdit(element[0].users)}</div>
                 <div class="d-none searchbar-add-contacts-input-container" id="searchbar-add-contacts-container">
                     <input onkeyup="searchContactToAddEdit(${elementID})" class="pointer" type="text" id="searchbar-add-contacts">
-                    <img class="rotated-image" src="/assets/img/arrow_drop_down.png" alt="" onclick="showAndHideContactsEdit(${elementID})"> <!-- reverse so that the arrow points upwards-->
+                    <img class="rotated-image" src="img/arrow-down.png" alt="" onclick="showAndHideContactsEdit(${elementID})"> <!-- reverse so that the arrow points upwards-->
                 </div>
                 <div class="d-none" id="add-task-contacts-to-assigne-edit">
                     ${renderAssignableContactsEdit(elementID)}
@@ -174,7 +174,7 @@ function openEditTaskForm(element, elementID) {
                 <label for="add-task-category">Category</label>
                 <div class="pointer" id="add-task-category" onclick="showAndHideCategories()">
                     <div id="add-task-currently-selected-category">${selectedTaskInnerHTML(element[0]['category'])}</div>
-                    <img id="arrow-categories" src="/assets/img/arrow_drop_down.png" alt="">
+                    <img id="arrow-categories" src="img/arrow-down.png" alt="">
                 </div>
                 <div class="d-none" id="add-task-category-dropdown">
                     <div class="add-task-category-dropdown-task" onclick="selectedTask('technical')">Technical Task
@@ -191,7 +191,7 @@ function openEditTaskForm(element, elementID) {
                             placeholder="Add new subtask">
 
                         <div id="add-task-subtask-image-container">
-                            <img src="/assets/img/add-task/subtask-add.png" alt="" onclick="confirmAddSubtask()">
+                            <img src="img/done-icon2.png" alt="" onclick="confirmAddSubtask()">
                         </div>
                     </div>
                     <div class="d-none" id="add-task-subtask-alert">
@@ -235,26 +235,26 @@ function generateEmtyTaskFormHTML() {
             <div id="add-task-priority">
                 <div id="add-task-urgent" class="add-task-priority-box pointer" onclick="changePriority('urgent')">
                     <div>Urgent</div>
-                    <img src="/assets/img/Prio urgent.png" alt="">
+                    <img src="img/urgent.icon2.png" alt="">
                 </div>
                 <div id="add-task-medium" class="add-task-priority-box pointer" onclick="changePriority('medium')">
                     <div>Medium</div>
-                    <img src="/assets/img/Prio medium.png" alt="">
+                    <img src="img/urgent-icon3.png" alt="">
                 </div>
                 <div id="add-task-low" class="add-task-priority-box pointer" onclick="changePriority('low')">
                     <div>Low</div>
-                    <img src="/assets/img/Prio low.png" alt="">
+                    <img src="img/urgent-icon4.png" alt="">
                 </div>
             </div>
 
             <label for="add-task-assigne">Assigned to (optional)</label>
             <div class="pointer" id="add-task-assigne" onclick="showAndHideContacts()">
                 <div>Select contacts to assgin</div>
-                <img src="/assets/img/arrow_drop_down.png" alt="">
+                <img src="img/arrow-down.png" alt="">
             </div>
             <div class="d-none searchbar-add-contacts-input-container" id="searchbar-add-contacts-container">
                 <input onkeyup="searchContactToAdd()" class="pointer" type="text" id="searchbar-add-contacts">
-                <img class="rotated-image" src="/assets/img/arrow_drop_down.png" alt="" onclick="showAndHideContacts()"> <!-- reverse so that the arrow points upwards-->
+                <img class="rotated-image" src="img/arrow-down.png" alt="" onclick="showAndHideContacts()"> <!-- reverse so that the arrow points upwards-->
             </div>
             <div class="d-none" id="add-task-contacts-to-assigne">
             </div>
@@ -264,7 +264,7 @@ function generateEmtyTaskFormHTML() {
             <label for="add-task-category">Category</label>
             <div class="pointer" id="add-task-category" onclick="showAndHideCategories()">
                 <div id="add-task-currently-selected-category">Select task category</div>
-                <img id="arrow-categories" src="/assets/img/arrow_drop_down.png" alt="">
+                <img id="arrow-categories" src="img/arrow-down.png" alt="">
             </div>
             <div class="d-none" id="add-task-category-dropdown">
                 <div class="add-task-category-dropdown-task" onclick="selectedTask('technical')">Technical Task
@@ -281,7 +281,7 @@ function generateEmtyTaskFormHTML() {
                         placeholder="Add new subtask">
 
                     <div id="add-task-subtask-image-container">
-                        <img src="/assets/img/add-task/subtask-add.png" alt="" onclick="confirmAddSubtask()">
+                        <img src="img/done-icon2.png" alt="" onclick="confirmAddSubtask()">
                     </div>
                 </div>
                 <div class="d-none" id="add-task-subtask-alert">
@@ -294,7 +294,7 @@ function generateEmtyTaskFormHTML() {
             </div>
             <div class="add-task-form-buttons">
                 <button type="button" id="add-task-clear-form" onclick="clearForm()" formnovalidate>Clear X</button>
-                <button id="add-task-create-task"> Create Task <img src="/assets/img/check.png" alt=""></button>
+                <button id="add-task-create-task"> Create Task <img src="img/done-icon2.png" alt=""></button>
             </div>
         </div>       
 </div>`;
@@ -312,15 +312,15 @@ function selectedTaskPriorityInnerHTML(selectedTask) {
     switch (selectedTask) {
         case 'urgent':
             taskText = 'urgent';
-            taskImageSrc = '/assets/img/Prio urgent.png';
+            taskImageSrc = 'img/urgent.icon2.png';
             break;
         case 'medium':
             taskText = 'medium';
-            taskImageSrc = '/assets/img/Prio medium.png';
+            taskImageSrc = 'img/urgent-icon3.png';
             break;
         case 'low':
             taskText = 'low';
-            taskImageSrc = '/assets/img/Prio low.png';
+            taskImageSrc = 'img/urgent-icon4.png';
             break;
         default: 
             taskText = 'no priority'
@@ -343,14 +343,14 @@ function loadPriorityLow(priority){
            return (`
             <div id="add-task-low" class="add-task-priority-box pointer selected" onclick="changePriority('low')" style="background-color: rgb(122, 226, 41); color: rgb(255, 255, 255);">
                 <div>Low</div>                    
-                <img src="/assets/img/Prio low white.png" alt="">
+                <img src="img/urgent-icon4.png" alt="">
             </div>`
            );
         default:
             return (`
                 <div id="add-task-low" class="add-task-priority-box pointer" onclick="changePriority('low')">
                     <div>Low</div>
-                    <img src="/assets/img/Prio low.png" alt="">
+                    <img src="img/urgent-icon4.png" alt="">
                 </div>`
             );
     }
@@ -368,14 +368,14 @@ function loadPriorityMedium(priority){
             return (`
                 <div id="add-task-medium" class="add-task-priority-box pointer selected" onclick="changePriority('medium')" style="background-color: rgb(255, 168, 0); color: rgb(255, 255, 255);">
                     <div>Medium</div>
-                    <img src="/assets/img/Prio medium white.png" alt="">
+                    <img src="img/urgent-icon3.png" alt="">
                  </div>`
             );
         default: 
             return (`
                 <div id="add-task-medium" class="add-task-priority-box pointer" onclick="changePriority('medium')">
                     <div>Medium</div>
-                    <img src="/assets/img/Prio medium.png" alt="">
+                    <img src="img/urgent-icon3.png" alt="">
                 </div>`
             );
     }
@@ -393,14 +393,14 @@ function loadPriorityUrgent(priority){
             return (`
                 <div id="add-task-urgent" class="add-task-priority-box pointer selected" onclick="changePriority('urgent')" style="background-color: rgb(255, 61, 0); color: rgb(255, 255, 255);">
                     <div>Urgent</div>
-                    <img src="/assets/img/Prio urgent white.png" alt="">
+                    <img src="img/urgent.icon2.png" alt="">
                 </div>`
             );
         default: 
             return (`
                 <div id="add-task-urgent" class="add-task-priority-box pointer" onclick="changePriority('urgent')">
                     <div>Urgent</div>
-                    <img src="/assets/img/Prio urgent.png" alt="">
+                    <img src="img/urgent.icon2.png" alt="">
                 </div>`
             );
     }

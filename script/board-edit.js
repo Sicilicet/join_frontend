@@ -106,7 +106,7 @@ function assignContactsTemplateEdit(username, index, element, elementID) {
 
     const contactElement = document.createElement('div');
     let selectedClass = '';
-    let checkboxImage = `assets/img/add-task/checkbox.png`;
+    let checkboxImage = `img/checkbox.png`;
 
     if (assignedContactsUsernames.includes(username)) {
         selectedClass = 'selectedContact';

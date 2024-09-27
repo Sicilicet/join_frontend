@@ -14,9 +14,8 @@
     <link rel="stylesheet" href="style/animations.css" />
     <link rel="stylesheet" href="style/media.css" />
     <link rel="stylesheet" href="style/mobile.css" />
-    <script src="script/database.js"></script>
     <script src="script/script.js"></script>
-    <script src="script/contacts.js"></script>
+    <script src="script/assignd-Contacts-Subtasks.js"></script>
     <script src="script/board.js"></script>
     <script src="script/board-html.js"></script>
     <script src="script/board-edit.js"></script>
@@ -25,6 +24,7 @@
     <script src="script/add-task-subtask.js"></script>
     <script src="script/add-task-prio.js"></script>
     <script src="script/add-task-html.js"></script>
+    <script src="script/database.js"></script>
   </head>
 
   <body onload="init(), updateHTML()">
@@ -71,6 +71,7 @@
           <div id="doneListContainer" class="dragdrop" ondrop="moveTo('done')" ondragover="allowDrop(event)"></div>
         </div>
       </div>
+      <div id="InfoCard"></div>
     </div>
 
     <div id="slide-form-add-task">
