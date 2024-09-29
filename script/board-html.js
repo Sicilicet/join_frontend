@@ -5,11 +5,11 @@
  * @returns {string} - The HTML representation of the task.
  */
 function generateTodoHTML(element, elementID) {
-    const assignedContactHTML = renderAssignedContactSmallInfoCard(element['user']);
-    // const progressBarHTML = progressBarSmallInfoCard(element);    
-    const categoryHTML = element['category'] ? `<div class="category">${getFirstLettersUppercase(element['category'])}</div>` : '';
+  const assignedContactHTML = renderAssignedContactSmallInfoCard(element['user']);
+  // const progressBarHTML = progressBarSmallInfoCard(element);
+  const categoryHTML = element['category'] ? `<div class="category">${getFirstLettersUppercase(element['category'])}</div>` : '';
 
-    const dropdownMenuHTML = /*html*/`
+  const dropdownMenuHTML = /*html*/ `
     <select class="statusDropdown" id="statusDropdown${elementID}" onchange="updateStatusMobile(${elementID}, this.value)">
             <option value="" disabled selected>Status</option>
             <option value="todo" ${element['status'] === 'todo' ? 'disabled' : ''}>To do</option>
@@ -18,8 +18,8 @@ function generateTodoHTML(element, elementID) {
             <option value="done" ${element['status'] === 'done' ? 'disabled' : ''}>Done</option>
     </select>
     `;
-// ${progressBarHTML}
-    return /*html*/`
+  // ${progressBarHTML}
+  return /*html*/ `
     <div class="todo-container">
         <div draggable="true" onclick="openInfoCard(${elementID})" ondragstart="startDragging(${elementID})" class="todo" id="${elementID}">
             <div class="baseline"> 
@@ -42,21 +42,19 @@ function generateTodoHTML(element, elementID) {
                 </div>
             </div>           
         </div>
-    </div>`;     
+    </div>`;
 }
-
 
 /**
  * Generates HTML for an empty todo task.
  * @param {HTMLElement} container - The container element.
  */
-function generateEmtyTodoHTML(container){   
-    container.innerHTML = /*html*/`               
+function generateEmtyTodoHTML(container) {
+  container.innerHTML = /*html*/ `               
     <div class="emtyTask">
        <p>No tasks To do</p>            
     </div>`;
 }
-
 
 /**
  * Generates the HTML for an open information card.
@@ -65,10 +63,10 @@ function generateEmtyTodoHTML(container){
  * @returns {string} - The HTML for the information card.
  */
 function generateOpenInfoCardHTML(element, elementID) {
-    const reversedDate = reverseDate(element[0].created_at); // muss noch berechnet werden zu due date nicht created
-    const categoryHTML = element[0]['category'] ? `<div class="category">${getFirstLettersUppercase(element[0]['category'])}</div>` : '';
+  const reversedDate = reverseDate(element[0].created_at); // muss noch berechnet werden zu due date nicht created
+  const categoryHTML = element[0]['category'] ? `<div class="category">${getFirstLettersUppercase(element[0]['category'])}</div>` : '';
 
-    return /*html*/`
+  return /*html*/ `
     <div class="popup editTaskContainerBoard" onclick="closeTaskPopup()">
         <div class="popup-content editTask" onclick="doNotClose(event)">
             <div class="spacebetween pointer">
@@ -119,7 +117,6 @@ function generateOpenInfoCardHTML(element, elementID) {
     </div>`;
 }
 
-
 /**
  * Opens the edit task form.
  * @param {Array} element - The element containing task information.
@@ -127,10 +124,10 @@ function generateOpenInfoCardHTML(element, elementID) {
  * @returns {string} - The HTML for the edit task form.
  */
 function openEditTaskForm(element, elementID) {
-    const categoryHTML = element[0]['category'] ? `<div class="category">${getFirstLettersUppercase(element[0]['category'])}</div>` : '';
-    
-    saveStatus(element[0]['status']);
-    return /*html*/`
+  const categoryHTML = element[0]['category'] ? `<div class="category">${getFirstLettersUppercase(element[0]['category'])}</div>` : '';
+
+  saveStatus(element[0]['status']);
+  return /*html*/ `
     <div class="popup editTaskContainerBoard" onclick="closeTaskPopup()">
         <form class="popup-content editTask" onclick="doNotClose(event)" onsubmit="updateEditedTask(${elementID}); return false;">
             <div class="editTask-container-content">
@@ -146,7 +143,9 @@ function openEditTaskForm(element, elementID) {
                     placeholder="Enter a description">${element[0].description}</textarea>
 
                 <label for="add-task-date">Due date</label>
-                <input required class="pointer" type="date" name="add-task-date" id="add-task-date" min="" value="${element[0].created_at}" onclick="updateMinDate()">
+                <input required class="pointer" type="date" name="add-task-date" id="add-task-date" min="" value="${
+                  element[0].created_at
+                }" onclick="updateMinDate()">
 
                 <label for="add-task-priority">Priority (optional)</label>
                 <div id="add-task-priority">
@@ -211,125 +210,143 @@ function openEditTaskForm(element, elementID) {
     </div>`;
 }
 
-
 /**
  * Generates the HTML for an empty task form.
  */
 function generateEmtyTaskFormHTML() {
-    let taskForm = document.getElementById('task-form');
+  let taskForm = document.getElementById('task-form');
 
-    taskForm.innerHTML = /*html*/`
-    <div class="add-task-container">
-    <form onsubmit="updateCreatedTask(); return false;">
-        <div class="add-task-container-content">
-            <input required class="pointer" type="text" placeholder="Enter a title" id="add-task-title">
-
-            <label for="add-task-description">Description (optional)</label>
-            <textarea class="pointer" type="text" name="add-task-description" id="add-task-description"
-                placeholder="Enter a description"></textarea>
-
-            <label for="add-task-date">Due date</label>
-            <input required class="pointer" type="date" name="add-task-date" id="add-task-date" min="" onclick="updateMinDate()">
-
-            <label for="add-task-priority">Priority (optional)</label>
-            <div id="add-task-priority">
-                <div id="add-task-urgent" class="add-task-priority-box pointer" onclick="changePriority('urgent')">
-                    <div>Urgent</div>
-                    <img src="img/urgent.icon2.png" alt="">
-                </div>
-                <div id="add-task-medium" class="add-task-priority-box pointer" onclick="changePriority('medium')">
-                    <div>Medium</div>
-                    <img src="img/urgent-icon3.png" alt="">
-                </div>
-                <div id="add-task-low" class="add-task-priority-box pointer" onclick="changePriority('low')">
-                    <div>Low</div>
-                    <img src="img/urgent-icon4.png" alt="">
-                </div>
-            </div>
-
-            <label for="add-task-assigne">Assigned to (optional)</label>
-            <div class="pointer" id="add-task-assigne" onclick="showAndHideContacts()">
-                <div>Select contacts to assgin</div>
-                <img src="img/arrow-down.png" alt="">
-            </div>
-            <div class="d-none searchbar-add-contacts-input-container" id="searchbar-add-contacts-container">
-                <input onkeyup="searchContactToAdd()" class="pointer" type="text" id="searchbar-add-contacts">
-                <img class="rotated-image" src="img/arrow-down.png" alt="" onclick="showAndHideContacts()"> <!-- reverse so that the arrow points upwards-->
-            </div>
-            <div class="d-none" id="add-task-contacts-to-assigne">
-            </div>
-            <div class="d-none" id="add-task-selected-contacts-mini">
-            </div>            
-            
-            <label for="add-task-category">Category</label>
-            <div class="pointer" id="add-task-category" onclick="showAndHideCategories()">
-                <div id="add-task-currently-selected-category">Select task category</div>
-                <img id="arrow-categories" src="img/arrow-down.png" alt="">
-            </div>
-            <div class="d-none" id="add-task-category-dropdown">
-                <div class="add-task-category-dropdown-task" onclick="selectedTask('technical')">Technical Task
-                </div>
-                <div class="add-task-category-dropdown-task" onclick="selectedTask('userstory')">User Story</div>
-            </div>
-            <div class="d-none" id="add-task-category-alert">
-                <span>Please choose a category</span>
-            </div>
-            <label for="add-task-subtask">Subtask (optional)</label>
-            <div id="add-task-subtask-container">
-                <div id="add-task-subtask-input-container">
-                    <input class="pointer" type="text" name="subtask" id="add-task-subtask-input"
-                        placeholder="Add new subtask">
-
-                    <div id="add-task-subtask-image-container">
-                        <img src="img/done-icon2.png" alt="" onclick="confirmAddSubtask()">
+  taskForm.innerHTML = /*html*/ `
+    <div>
+        <h1 id="headerAddTask">Add Task</h1>
+        <form onsubmit="updateCreatedTask(); return false;">
+            <div class="first-container">
+                <div class="child-container-left">
+                    <div>
+                        <h4>Title</h4>
+                        <input required class="title" type="text" placeholder="Enter a title" id="add-task-title">
+                    </div>
+                    <div>
+                        <h4 for="add-task-description">Description (optional)</h4>
+                        <textarea class="description" type="text" name="add-task-description" id="add-task-description"
+                           placeholder="Enter a description"></textarea>
+                    </div>
+                    <div>
+                        <h4 for="add-task-date">Due date</h4>
+                        <input required class="title" type="date" name="add-task-date" id="add-task-date" min="" onclick="updateMinDate()">
                     </div>
                 </div>
-                <div class="d-none" id="add-task-subtask-alert">
-                    <span style="color: red;">You can't add an empty subtask</span>
-                </div>
-                <div>
-                    <ul id="add-task-subtask-list">                        
-                    </ul>
-                </div>
-            </div>
-            <div class="add-task-form-buttons">
-                <button type="button" id="add-task-clear-form" onclick="clearForm()" formnovalidate>Clear X</button>
-                <button id="add-task-create-task"> Create Task <img src="img/done-icon2.png" alt=""></button>
-            </div>
-        </div>       
-</div>`;
-}
 
+                <div class="strich-gray3"></div>
+
+                <div class="child-container-right">
+                    <div>
+                        <h4 for="add-task-priority">Priority (optional)</h4>
+                        <div id="add-task-priority" class="difficulty-level">
+                            <div id="add-task-urgent" onclick="changePriority('urgent')">
+                                <div>Urgent</div>
+                                <img src="img/urgent.icon2.png" alt="">
+                            </div>
+                            <div id="add-task-medium" onclick="changePriority('medium')">
+                             <div>Medium</div>
+                                <img src="img/urgent-icon3.png" alt="">
+                            </div>
+                            <div id="add-task-low" onclick="changePriority('low')">
+                                <div>Low</div>
+                                <img src="img/urgent-icon4.png" alt="">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 for="add-task-assigne">Assigned to (optional)</h4>
+                        <div class="assign-to-main">
+                            <div id="add-task-assigne" class="assign-to" onclick="showAndHideContacts()">
+                                <div>Select contacts to assgin</div>
+                            <img src="img/arrow-down.png" alt="">
+                            </div>
+                            <div class="d-none searchbar-add-contacts-input-container" id="searchbar-add-contacts-container">
+                                <input onkeyup="searchContactToAdd()" class="pointer" type="text" id="searchbar-add-contacts">
+                                <img class="rotated-image" src="img/arrow-down.png" alt="" onclick="showAndHideContacts()"> <!-- reverse so that the arrow points upwards-->
+                            </div>
+                            <div class="d-none" id="add-task-contacts-to-assigne"></div>
+                            <div class="d-none" id="add-task-selected-contacts-mini"></div>  
+                        </div> 
+                    </div> 
+
+                    <div>
+                        <h4 for="add-task-category">Category</h4>       
+                        <div class="new-category-container">
+                            <div id="add-task-currently-selected-category" class="category" onclick="showAndHideCategories()">
+                            Select task category
+                            <img id="arrow-categories" src="img/arrow-down.png" alt="">
+                            </div>
+                            <div class="d-none" id="add-task-category-dropdown">
+                            <div class="add-task-category-dropdown-task" onclick="selectedTask('technical')">Technical Task
+                            </div>
+                            <div class="add-task-category-dropdown-task" onclick="selectedTask('userstory')">User Story</div>
+                            </div>
+                            <div class="d-none" id="add-task-category-alert">
+                            <span>Please choose a category</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 for="add-task-subtask">Subtask (optional)</h4>
+                        <div id="add-task-subtask-input-container" class="align-Add-Subtask">
+                            <input class="title" type="text" name="subtask" id="add-task-subtask-input" placeholder="Add new subtask">
+                            <div id="add-task-subtask-image-container" class="accept-new-subtask">
+                                <img src="img/done-icon2.png" alt="" onclick="confirmAddSubtask()">
+                            </div>
+                        </div>
+                        <div class="d-none" id="add-task-subtask-alert">
+                            <span style="color: red;">You can't add an empty subtask</span>
+                        </div>
+                        <div>
+                            <ul id="add-task-subtask-list"></ul>
+                        </div>
+                    </div>
+
+                        
+                    <div class="buttons-add-task-fix">
+                    <button type="button" id="add-task-clear-form" class="button02" onclick="clearForm()" formnovalidate>Clear X</button>
+                    <button id="add-task-create-task" class="button01"> Create Task <img src="img/done.png" alt=""></button>
+                </div>
+            </div>
+        </form>
+    </div>`;
+}
 
 /**
  * Generates the inner HTML for a selected task.
  * @param {string} selectedTask - The selected task.
  * @returns {string} - The inner HTML.
  */
-function selectedTaskPriorityInnerHTML(selectedTask) {    
-    let taskImageSrc = '';
+function selectedTaskPriorityInnerHTML(selectedTask) {
+  let taskImageSrc = '';
 
-    switch (selectedTask) {
-        case 'urgent':
-            taskText = 'urgent';
-            taskImageSrc = 'img/urgent.icon2.png';
-            break;
-        case 'medium':
-            taskText = 'medium';
-            taskImageSrc = 'img/urgent-icon3.png';
-            break;
-        case 'low':
-            taskText = 'low';
-            taskImageSrc = 'img/urgent-icon4.png';
-            break;
-        default: 
-            taskText = 'no priority'
-            taskImageSrc = '/assets/img/white-block.png';
-    }
-    let resultHTML = `
+  switch (selectedTask) {
+    case 'urgent':
+      taskText = 'urgent';
+      taskImageSrc = 'img/urgent.icon2.png';
+      break;
+    case 'medium':
+      taskText = 'medium';
+      taskImageSrc = 'img/urgent-icon3.png';
+      break;
+    case 'low':
+      taskText = 'low';
+      taskImageSrc = 'img/urgent-icon4.png';
+      break;
+    default:
+      taskText = 'no priority';
+      taskImageSrc = '/assets/img/white-block.png';
+  }
+  let resultHTML = `
         <img src="${taskImageSrc}" alt="${selectedTask}" class="priorityIcon">
     `;
-    return resultHTML;
+  return resultHTML;
 }
 
 /**
@@ -337,71 +354,63 @@ function selectedTaskPriorityInnerHTML(selectedTask) {
  * @param {string} priority - The current priority level ('low' or other).
  * @returns {string} - The HTML string representing the Low priority box.
  */
-function loadPriorityLow(priority){   
-    switch(priority){
-        case 'low':
-           return (`
+function loadPriorityLow(priority) {
+  switch (priority) {
+    case 'low':
+      return `
             <div id="add-task-low" class="add-task-priority-box pointer selected" onclick="changePriority('low')" style="background-color: rgb(122, 226, 41); color: rgb(255, 255, 255);">
                 <div>Low</div>                    
                 <img src="img/urgent-icon4.png" alt="">
-            </div>`
-           );
-        default:
-            return (`
+            </div>`;
+    default:
+      return `
                 <div id="add-task-low" class="add-task-priority-box pointer" onclick="changePriority('low')">
                     <div>Low</div>
                     <img src="img/urgent-icon4.png" alt="">
-                </div>`
-            );
-    }
+                </div>`;
+  }
 }
-
 
 /**
  * Generates the HTML for the Medium priority box based on the provided priority.
  * @param {string} priority - The current priority level ('medium' or other).
  * @returns {string} - The HTML string representing the Medium priority box.
  */
-function loadPriorityMedium(priority){
-    switch(priority){
-        case 'medium':
-            return (`
+function loadPriorityMedium(priority) {
+  switch (priority) {
+    case 'medium':
+      return `
                 <div id="add-task-medium" class="add-task-priority-box pointer selected" onclick="changePriority('medium')" style="background-color: rgb(255, 168, 0); color: rgb(255, 255, 255);">
                     <div>Medium</div>
                     <img src="img/urgent-icon3.png" alt="">
-                 </div>`
-            );
-        default: 
-            return (`
+                 </div>`;
+    default:
+      return `
                 <div id="add-task-medium" class="add-task-priority-box pointer" onclick="changePriority('medium')">
                     <div>Medium</div>
                     <img src="img/urgent-icon3.png" alt="">
-                </div>`
-            );
-    }
+                </div>`;
+  }
 }
-
 
 /**
  * Generates the HTML for the Urgent priority box based on the provided priority.
  * @param {string} priority - The current priority level ('urgent' or other).
  * @returns {string} - The HTML string representing the Urgent priority box.
  */
-function loadPriorityUrgent(priority){
-    switch(priority){
-        case 'urgent':
-            return (`
+function loadPriorityUrgent(priority) {
+  switch (priority) {
+    case 'urgent':
+      return `
                 <div id="add-task-urgent" class="add-task-priority-box pointer selected" onclick="changePriority('urgent')" style="background-color: rgb(255, 61, 0); color: rgb(255, 255, 255);">
                     <div>Urgent</div>
                     <img src="img/urgent.icon2.png" alt="">
-                </div>`
-            );
-        default: 
-            return (`
+                </div>`;
+    default:
+      return `
                 <div id="add-task-urgent" class="add-task-priority-box pointer" onclick="changePriority('urgent')">
                     <div>Urgent</div>
                     <img src="img/urgent.icon2.png" alt="">
-                </div>`
-            );
-    }
+                </div>`;
+  }
 }

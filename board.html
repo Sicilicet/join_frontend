@@ -74,11 +74,11 @@
       <div id="InfoCard"></div>
     </div>
 
-    <div id="slide-form-add-task">
-      <div id="slide-form-close-btn" onclick="closeAddTaskForm()">
-        <img src="img/cross-icon.png" alt="" />
+    <div id="slide-form-add-task" class="overlay">
+      <div class="background" onclick="closeAddTaskForm()"></div>
+      <div class="overlay-content">
+        <div id="task-form" class="add-task-template"></div>
       </div>
-      <div id="task-form"></div>
     </div>
   </body>
 </html>
