@@ -23,15 +23,15 @@
                 <div>
                     <h4 for="add-task-priority">Priority (optional)</h4>
                     <div id="add-task-priority" class="difficulty-level">
-                        <div id="add-task-urgent" onclick="changePriority('urgent')">
+                        <div id="add-task-urgent" class="add-task-priority-box" onclick="changePriority('urgent')">
                             <div>Urgent</div>
                             <img src="img/urgent.icon2.png" alt="">
                         </div>
-                        <div id="add-task-medium" onclick="changePriority('medium')">
+                        <div id="add-task-medium" class="add-task-priority-box" onclick="changePriority('medium')">
                          <div>Medium</div>
                             <img src="img/urgent-icon3.png" alt="">
                         </div>
-                        <div id="add-task-low" onclick="changePriority('low')">
+                        <div id="add-task-low" class="add-task-priority-box" onclick="changePriority('low')">
                             <div>Low</div>
                             <img src="img/urgent-icon4.png" alt="">
                         </div>
@@ -41,7 +41,7 @@
                 <div>
                     <h4 for="add-task-assigne">Assigned to (optional)</h4>
                     <div class="assign-to-main">
-                        <div id="add-task-assigne" class="assign-to" onclick="showAndHideContacts()">
+                        <div id="add-task-assigne" class="assign-to pointer" onclick="showAndHideContacts()">
                             <div>Select contacts to assgin</div>
                         <img src="img/arrow-down.png" alt="">
                         </div>
@@ -57,9 +57,9 @@
                 <div>
                     <h4 for="add-task-category">Category</h4>       
                     <div class="new-category-container">
-                        <div id="add-task-currently-selected-category" class="category" onclick="showAndHideCategories()">
-                        Select task category
-                        <img id="arrow-categories" src="img/arrow-down.png" alt="">
+                        <div class="category pointer" onclick="showAndHideCategories()">
+                            <div id="add-task-currently-selected-category">Select task category</div>
+                            <img id="arrow-categories" src="img/arrow-down.png" alt="">
                         </div>
                         <div class="d-none" id="add-task-category-dropdown">
                         <div class="add-task-category-dropdown-task" onclick="selectedTask('technical')">Technical Task
@@ -74,17 +74,19 @@
 
                 <div>
                     <h4 for="add-task-subtask">Subtask (optional)</h4>
-                    <div id="add-task-subtask-input-container" class="align-Add-Subtask">
-                        <input class="title" type="text" name="subtask" id="add-task-subtask-input" placeholder="Add new subtask">
-                        <div id="add-task-subtask-image-container" class="accept-new-subtask">
-                            <img src="img/done-icon2.png" alt="" onclick="confirmAddSubtask()">
+                    <div id="add-task-subtask-container">
+                        <div id="add-task-subtask-input-container" class="align-Add-Subtask">
+                            <input class="title pointer" type="text" name="subtask" id="add-task-subtask-input" placeholder="Add new subtask">
+                            <div id="add-task-subtask-image-container" class="accept-new-subtask">
+                             <img src="img/done-icon2.png" alt="" onclick="holdSubtasks()">
+                            </div>
                         </div>
-                    </div>
-                    <div class="d-none" id="add-task-subtask-alert">
-                        <span style="color: red;">You can't add an empty subtask</span>
-                    </div>
-                    <div>
-                        <ul id="add-task-subtask-list"></ul>
+                        <div class="d-none" id="add-task-subtask-alert">
+                            <span style="color: red;">You can't add an empty subtask</span>
+                        </div>
+                        <div>
+                            <ul id="add-task-subtask-list"></ul>
+                        </div>
                     </div>
                 </div>
 
@@ -95,5 +97,7 @@
             </div>
         </div>
     </form>
-    <div id="successTask" class="addedTaskSuccess"><p>Task added to board</p> <img src="img/task-added.png" alt=""></div>
+    <div id="successTask" class="TaskAddedPopup">
+        <img src="img/task-added.png" alt="" />
+      </div>
 </div>

@@ -74,14 +74,14 @@ async function createTask() {
     try {
         
         allTasks.push(newTask);
-        await setTodo(newTask.title, newTask.description, newTask.date, 
+        await setTask(newTask.title, newTask.description, newTask.date, 
             newTask.priority, newTask.assignedContact, newTask.category,
             newTask.status, newTask.subtask);
     } catch (error){
         console.log('kein neues todo', error)
     }
 
-    if (window.location.href.endsWith('add_task.html')) {
+    if (window.location.href.endsWith('add-task.html')) {
         taskAddedPopup();
         setTimeout(function () {
             window.location.href = 'board.html';
@@ -202,8 +202,8 @@ function selectContact(id) {
         selectedContacts.push(selectedContact);
         selectedUsersForTask.push(selectedContact);
         contact.classList.add('selectedContact');
-        checkboxImage.src = 'assets/img/add-task/checkbox-checked.png';
-        checkboxImage.style.filter = 'brightness(0) saturate(100%) invert(87%) sepia(14%) saturate(5010%) hue-rotate(541deg) brightness(250%) contrast(155%)';
+        checkboxImage.src = 'img/checkbox-checked.png';
+        checkboxImage.style.filter = 'brightness(100) saturate(100%) invert(87%) sepia(14%) saturate(5010%) hue-rotate(541deg) brightness(250%) contrast(155%)';
     }
 }
 
@@ -292,7 +292,7 @@ function showContacts(selectedContactsMini, contactBox, contactDropdown, contact
  * @function 
  */
 function hideContacts(selectedContactsMini, contactBox, contactDropdown, contactSearchbarContainer) {
-    if (document.location.pathname.includes('add_task.html') || document.location.pathname.includes('board.html')) {
+    if (document.location.pathname.includes('add-task.html') || document.location.pathname.includes('board.html')) {
         contactBox.classList.add('d-none');
         contactSearchbarContainer.classList.add('d-none');
         contactDropdown.classList.remove('d-none');
@@ -336,7 +336,7 @@ function showCategories(taskBox, arrowCategories) {
  * @function
  */
 function hideCategories(taskBox, arrowCategories) {
-    if (document.location.pathname.includes('add_task.html') || document.location.pathname.includes('board.html')) {
+    if (document.location.pathname.includes('add-task.html') || document.location.pathname.includes('board.html')) {
         taskBox.classList.add('d-none');
         arrowCategories.style = 'transform: rotate(0deg);';
     }
@@ -410,14 +410,14 @@ function assignContactsTemplate(username, index) {
     let checkboxImage = `img/checkbox.png`;
     if (contactFound) {
         selectedClass = 'selectedContact';
-        checkboxImage = 'assets/img/add-task/checkbox-checked.png';
+        checkboxImage = 'img/checkbox-checked.png';
     }
 
     const contactElement = document.createElement('div');
     contactElement.innerHTML = contactElementInnerHTML(index, selectedClass, username, checkboxImage);
     const checkboxImgElement = contactElement.querySelector(`#contact-checkbox-${index}`);
     if (contactFound) {
-        checkboxImgElement.style.filter = 'brightness(0) saturate(100%) invert(87%) sepia(14%) saturate(5010%) hue-rotate(541deg) brightness(250%) contrast(155%)';
+        checkboxImgElement.style.filter = 'brightness(100) saturate(100%) invert(87%) sepia(14%) saturate(5010%) hue-rotate(541deg) brightness(250%) contrast(155%)';
     }
     return contactElement.innerHTML;
 }

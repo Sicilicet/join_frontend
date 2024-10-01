@@ -22,7 +22,7 @@ function initAddTask(situation) {
 
 /** fetching the Add Task template*/
 async function showAddTaskTemplate() {
-  const response = await fetch('templates/add-task.html');
+  const response = await fetch('templates/task.html');
   const template = await response.text();
   document.getElementById('add-task-template').innerHTML = template;
 }

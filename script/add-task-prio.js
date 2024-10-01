@@ -3,104 +3,105 @@
  * @function
  */
 function changeColorUrgent() {
-    if (document.getElementById('add-task-urgent') != null && document.getElementById('add-task-urgent').style.backgroundColor == 'rgb(255, 61, 0)') {
-        resetColorAll();
-        return 'none';
-    } else {
-        if (document.getElementById('add-task-medium') != null && document.getElementById('add-task-urgent') != null && document.getElementById('add-task-low') != null){ 
-        document.getElementById('add-task-urgent').style.backgroundColor = '#FF3D00';
-        document.getElementById('add-task-urgent').style.color = '#fff';
-        document.getElementById('add-task-urgent').querySelector('img').src = '/assets/img/Prio urgent white.png';
+  if (document.getElementById('add-task-urgent') != null && document.getElementById('add-task-urgent').style.backgroundColor == 'rgb(255, 61, 0)') {
+    resetColorAll();
+    return 'none';
+  } else {
+    if (
+      document.getElementById('add-task-medium') != null &&
+      document.getElementById('add-task-urgent') != null &&
+      document.getElementById('add-task-low') != null
+    ) {
+      document.getElementById('add-task-urgent').style.backgroundColor = '#FF3D00';
+      document.getElementById('add-task-urgent').style.color = '#fff';
+      document.getElementById('add-task-urgent').querySelector('img').src = 'img/Prio urgent white.png';
 
-        document.getElementById('add-task-medium').style.backgroundColor = '#fff';
-        document.getElementById('add-task-medium').style.color = '#000';
-        document.getElementById('add-task-medium').querySelector('img').src = '/assets/img/Prio medium.png';
+      document.getElementById('add-task-medium').style.backgroundColor = '#fff';
+      document.getElementById('add-task-medium').style.color = '#000';
+      document.getElementById('add-task-medium').querySelector('img').src = 'img/urgent-icon3.png';
 
-        document.getElementById('add-task-low').style.backgroundColor = '#fff';
-        document.getElementById('add-task-low').style.color = '#000';
-        document.getElementById('add-task-low').querySelector('img').src = '/assets/img/Prio low.png';
-        }
+      document.getElementById('add-task-low').style.backgroundColor = '#fff';
+      document.getElementById('add-task-low').style.color = '#000';
+      document.getElementById('add-task-low').querySelector('img').src = 'img/urgent-icon4.png';
     }
-
+  }
 }
-
 
 /**
  * Changes the color scheme for the 'Medium' priority category.
  * @function
  */
 function changeColorMedium() {
-    if (document.getElementById('add-task-medium') != null && document.getElementById('add-task-medium').style.backgroundColor == 'rgb(255, 168, 0)') {
-        resetColorAll();
-        return 'none';
-    } else {
-        if (document.getElementById('add-task-medium') != null && document.getElementById('add-task-urgent') != null && document.getElementById('add-task-low') != null){ 
-        document.getElementById('add-task-medium').style.backgroundColor = '#FFA800';
-        document.getElementById('add-task-medium').style.color = '#fff';
-        document.getElementById('add-task-medium').querySelector('img').src = '/assets/img/Prio medium white.png';
+  if (document.getElementById('add-task-medium') != null && document.getElementById('add-task-medium').style.backgroundColor == 'rgb(255, 168, 0)') {
+    resetColorAll();
+    return 'none';
+  } else {
+    if (
+      document.getElementById('add-task-medium') != null &&
+      document.getElementById('add-task-urgent') != null &&
+      document.getElementById('add-task-low') != null
+    ) {
+      document.getElementById('add-task-medium').style.backgroundColor = '#FFA800';
+      document.getElementById('add-task-medium').style.color = '#fff';
+      document.getElementById('add-task-medium').querySelector('img').src = 'img/Prio medium white.png';
 
-        document.getElementById('add-task-urgent').style.backgroundColor = '#fff';
-        document.getElementById('add-task-urgent').style.color = '#000';
-        document.getElementById('add-task-urgent').querySelector('img').src = '/assets/img/Prio urgent.png';
+      document.getElementById('add-task-urgent').style.backgroundColor = '#fff';
+      document.getElementById('add-task-urgent').style.color = '#000';
+      document.getElementById('add-task-urgent').querySelector('img').src = 'img/urgent.icon2.png';
 
-        document.getElementById('add-task-low').style.backgroundColor = '#fff';
-        document.getElementById('add-task-low').style.color = '#000';
-        document.getElementById('add-task-low').querySelector('img').src = '/assets/img/Prio low.png';
-        }
+      document.getElementById('add-task-low').style.backgroundColor = '#fff';
+      document.getElementById('add-task-low').style.color = '#000';
+      document.getElementById('add-task-low').querySelector('img').src = 'img/urgent-icon4.png';
     }
-
+  }
 }
-
 
 /**
  * Changes the color scheme for the 'Low' priority category.
  * @function
  */
 function changeColorLow() {
-    if (document.getElementById('add-task-low') != null && document.getElementById('add-task-low').style.backgroundColor == 'rgb(122, 226, 41)') {
-        resetColorAll();
-        return 'none';
-    } else {
-        if (document.getElementById('add-task-medium') != null && document.getElementById('add-task-urgent') != null && document.getElementById('add-task-low') != null){ 
-        document.getElementById('add-task-low').style.backgroundColor = '#7AE229';
-        document.getElementById('add-task-low').style.color = '#fff';
-        document.getElementById('add-task-low').querySelector('img').src = '/assets/img/Prio low white.png';
+  if (document.getElementById('add-task-low') != null && document.getElementById('add-task-low').style.backgroundColor == 'rgb(122, 226, 41)') {
+    resetColorAll();
+    return 'none';
+  } else {
+    if (
+      document.getElementById('add-task-medium') != null &&
+      document.getElementById('add-task-urgent') != null &&
+      document.getElementById('add-task-low') != null
+    ) {
+      document.getElementById('add-task-low').style.backgroundColor = '#7AE229';
+      document.getElementById('add-task-low').style.color = '#fff';
+      document.getElementById('add-task-low').querySelector('img').src = 'img/Prio low white.png';
 
+      document.getElementById('add-task-urgent').style.backgroundColor = '#fff';
+      document.getElementById('add-task-urgent').style.color = '#000';
+      document.getElementById('add-task-urgent').querySelector('img').src = 'img/urgent.icon2.png';
 
-        document.getElementById('add-task-urgent').style.backgroundColor = '#fff';
-        document.getElementById('add-task-urgent').style.color = '#000';
-        document.getElementById('add-task-urgent').querySelector('img').src = '/assets/img/Prio urgent.png';
-
-
-        document.getElementById('add-task-medium').style.backgroundColor = '#fff';
-        document.getElementById('add-task-medium').style.color = '#000';
-        document.getElementById('add-task-medium').querySelector('img').src = '/assets/img/Prio medium.png';
-        }
+      document.getElementById('add-task-medium').style.backgroundColor = '#fff';
+      document.getElementById('add-task-medium').style.color = '#000';
+      document.getElementById('add-task-medium').querySelector('img').src = 'img/urgent-icon3.png';
     }
-
+  }
 }
-
 
 /**
  * Resets the color scheme for all priority categories.
  * @function
  */
 function resetColorAll() {
-    document.getElementById('add-task-low').style.backgroundColor = '#fff';
-    document.getElementById('add-task-low').style.color = '#000';
-    document.getElementById('add-task-low').querySelector('img').src = '/assets/img/Prio low.png';
+  document.getElementById('add-task-low').style.backgroundColor = '#fff';
+  document.getElementById('add-task-low').style.color = '#000';
+  document.getElementById('add-task-low').querySelector('img').src = 'img/urgent-icon4.png';
 
+  document.getElementById('add-task-urgent').style.backgroundColor = '#fff';
+  document.getElementById('add-task-urgent').style.color = '#000';
+  document.getElementById('add-task-urgent').querySelector('img').src = 'img/urgent.icon2.png';
 
-    document.getElementById('add-task-urgent').style.backgroundColor = '#fff';
-    document.getElementById('add-task-urgent').style.color = '#000';
-    document.getElementById('add-task-urgent').querySelector('img').src = '/assets/img/Prio urgent.png';
-
-
-    document.getElementById('add-task-medium').style.backgroundColor = '#fff';
-    document.getElementById('add-task-medium').style.color = '#000';
-    document.getElementById('add-task-medium').querySelector('img').src = '/assets/img/Prio medium.png';
+  document.getElementById('add-task-medium').style.backgroundColor = '#fff';
+  document.getElementById('add-task-medium').style.color = '#000';
+  document.getElementById('add-task-medium').querySelector('img').src = 'img/urgent-icon3.png';
 }
-
 
 /**
  * Assigns a priority level and updates the UI based on the provided priority.
@@ -109,18 +110,17 @@ function resetColorAll() {
  * @function
  */
 function assignPriority(priority) {
-    switch (priority) {
-        case 'urgent':
-            return 'urgent';
-        case 'medium':
-            return 'medium';
-        case 'low':
-            return 'low';
-        default:
-            return 'none';
-    }
+  switch (priority) {
+    case 'urgent':
+      return 'urgent';
+    case 'medium':
+      return 'medium';
+    case 'low':
+      return 'low';
+    default:
+      return 'none';
+  }
 }
-
 
 /**
  * Handles the click event for assigning task priority and updates the selected priority.
@@ -128,34 +128,34 @@ function assignPriority(priority) {
  * @returns {string} - The updated priority level ('urgent', 'medium', 'low', or 'none').
  */
 function assignPriorityClick(priority) {
-    switch (priority) {
-        case 'urgent':
-            let urgentColor = changeColorUrgent();
-            if (urgentColor == 'none') {
-                selectedPriority = 'none';
-                return 'none';
-            } else {
-                return 'urgent';
-            }
-        case 'medium':
-            let mediumColor = changeColorMedium();
-            if (mediumColor == 'none') {
-                selectedPriority = 'none';
-                return 'none';
-            } else {
-                return 'medium';
-            }
-        case 'low':
-            let lowColor = changeColorLow();
-            if (lowColor == 'none') {
-                selectedPriority = 'none';
-                return 'none';
-            } else {
-                return 'low';
-            }
-        default:
-            return 'none';
-    }
+  switch (priority) {
+    case 'urgent':
+      let urgentColor = changeColorUrgent();
+      if (urgentColor == 'none') {
+        selectedPriority = 'none';
+        return 'none';
+      } else {
+        return 'urgent';
+      }
+    case 'medium':
+      let mediumColor = changeColorMedium();
+      if (mediumColor == 'none') {
+        selectedPriority = 'none';
+        return 'none';
+      } else {
+        return 'medium';
+      }
+    case 'low':
+      let lowColor = changeColorLow();
+      if (lowColor == 'none') {
+        selectedPriority = 'none';
+        return 'none';
+      } else {
+        return 'low';
+      }
+    default:
+      return 'none';
+  }
 }
 
 /**
@@ -164,12 +164,11 @@ function assignPriorityClick(priority) {
  * @function
  */
 function changePriority(priority) {
-    if (document.getElementById(`add-task-${selectedPriority}`) != null && selectedPriority && selectedPriority !== 'none') {
-        document.getElementById(`add-task-${selectedPriority}`).classList.remove('selected');
-    }
+  if (document.getElementById(`add-task-${selectedPriority}`) != null && selectedPriority && selectedPriority !== 'none') {
+    document.getElementById(`add-task-${selectedPriority}`).classList.remove('selected');
+  }
 
-    selectedPriority = priority;
-    if (document.getElementById(`add-task-${priority}`) != null)
-    document.getElementById(`add-task-${priority}`).classList.add('selected');
-    assignPriorityClick(priority);
+  selectedPriority = priority;
+  if (document.getElementById(`add-task-${priority}`) != null) document.getElementById(`add-task-${priority}`).classList.add('selected');
+  assignPriorityClick(priority);
 }

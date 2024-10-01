@@ -248,7 +248,7 @@ function assignContactsTemplateEdit(name, index, element, elementID) {
 
     if (contactFound) {
         selectedClass = 'selectedContact';
-        checkboxImage = 'assets/img/add-task/checkbox-checked.png';
+        checkboxImage = 'img/checkbox-checked.png';
     }
 
     const contactElement = document.createElement('div');
@@ -262,7 +262,7 @@ function assignContactsTemplateEdit(name, index, element, elementID) {
 
     const checkboxImgElement = contactElement.querySelector(`#contact-checkbox-${index}`);
     if (contactFound) {
-        checkboxImgElement.style.filter = 'brightness(0) saturate(100%) invert(87%) sepia(14%) saturate(5010%) hue-rotate(541deg) brightness(250%) contrast(155%)';
+        checkboxImgElement.style.filter = 'brightness(100) saturate(100%) invert(87%) sepia(14%) saturate(5010%) hue-rotate(541deg) brightness(250%) contrast(155%)';
     }
 
     return contactElement.innerHTML;
