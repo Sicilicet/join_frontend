@@ -9,11 +9,7 @@ async function contactsInit() {
 
 // save actual Contacts
 async function saveContacts() {
-  // const existingContactsString = await getItem("kontakte");
-  // const existingContacts = existingContactsString ? JSON.parse(existingContactsString) : [];
-  // await setItem("kontakte", JSON.stringify(existingContacts));
   allContacts = await getUsers();
-  // nicht mehr nötig zu saven
 }
 
 // load contacts from storage
@@ -248,7 +244,7 @@ function addNewContactWindow() {
   let addNewContact = document.getElementById("addContact");
   addNewContact.style.display = 'flex';
   setTimeout(() => {
-    addNewContact.classList.add('addContactOn');
+    addNewContact.classList.add('overlay-content');
   }, 1);
   document.getElementById("popup-bg").style.display = "block";
 
@@ -482,7 +478,7 @@ async function delContact(i) {
 // close add new contact popup
 function closeAddNewContact() {
   let addNewContact = document.getElementById("addContact");
-  addNewContact.classList.remove('addContactOn');
+  addNewContact.classList.remove('overlay-content');
   document.getElementById("popup-bg").style.display = "none";
   addNewContact.style.display = 'none';
   document.getElementById('addContactName').value = '';
