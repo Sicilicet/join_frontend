@@ -15,31 +15,30 @@ async function saveContacts() {
 // load contacts from storage
 async function loadContacts() {
   try {
-      const contacts = await getUsers();
-      if (contacts) {
-          contacts.sort((a, b) => a.username.localeCompare(b.username));
-          // console.log(contacts)
-          await contactsListRender(contacts);
-      }
+    const contacts = await getUsers();
+    if (contacts) {
+      contacts.sort((a, b) => a.username.localeCompare(b.username));
+      // console.log(contacts)
+      await contactsListRender(contacts);
+    }
   } catch (error) {
     // console.log('removing')
-    console.error(error)
-      // await removeErrorContacts();
+    console.error(error);
+    // await removeErrorContacts();
   }
 }
-
 
 //removes contact, if it causes an error to load
 async function removeErrorContacts() {
   const contactsToRemove = [];
   for (let i = 0; i < loadedContacts.length; i++) {
-      const contact = loadedContacts[i];
-      if (!contact.name || !contact.email || !contact.phone) {
-          contactsToRemove.push(i);
-      }
+    const contact = loadedContacts[i];
+    if (!contact.name || !contact.email || !contact.phone) {
+      contactsToRemove.push(i);
+    }
   }
   for (let i = contactsToRemove.length - 1; i >= 0; i--) {
-      loadedContacts.splice(contactsToRemove[i], 1);
+    loadedContacts.splice(contactsToRemove[i], 1);
   }
   // await setItem("kontakte", JSON.stringify(loadedContacts));
   contactsListRender(loadedContacts);
@@ -47,18 +46,18 @@ async function removeErrorContacts() {
 
 // render ContactList into HTML
 async function contactsListRender(contacts) {
-    let contactsList = document.getElementById("contacts");
-    contactsList.innerHTML ='';
-    for (let i = 0; i < contacts.length; i++) {
-      const contact = contacts[i];
-      contactsList.innerHTML += contactList(contact, i);
-    }
+  let contactsList = document.getElementById('contacts');
+  contactsList.innerHTML = '';
+  for (let i = 0; i < contacts.length; i++) {
+    const contact = contacts[i];
+    contactsList.innerHTML += contactList(contact, i);
+  }
 }
 
 // get first uppercase letter from name, aswell from last name, then return HTML
 function contactList(contact, i) {
-  let words = contact.username.split(" ");
-  let uppercaseLetter = words.map(word => word.charAt(0).toUpperCase()).join("");
+  let words = contact.username.split(' ');
+  let uppercaseLetter = words.map((word) => word.charAt(0).toUpperCase()).join('');
   let firstLetter = uppercaseLetter.charAt(0);
 
   if (contactList.lastFirstLetter === undefined || contactList.lastFirstLetter !== firstLetter) {
@@ -72,8 +71,8 @@ function contactList(contact, i) {
 
 // contactlist HTML
 function contactInfo(contact, uppercaseLetter, i) {
-  if (contact.username == "Guest"){
-    contact.email = ''
+  if (contact.username == 'Guest') {
+    contact.email = '';
   }
   return `
         <div class="spacer">
@@ -97,8 +96,8 @@ function contactInfo(contact, uppercaseLetter, i) {
 let lastClickedContact = null;
 
 async function openContactView(i) {
-  let contactInfoId = "contactInfo" + i;
-  let contactView = document.getElementById("contactView");
+  let contactInfoId = 'contactInfo' + i;
+  let contactView = document.getElementById('contactView');
   if (lastClickedContact === contactInfoId) {
     removeContactView(contactView);
     return;
@@ -111,8 +110,8 @@ async function openContactView(i) {
 }
 
 //shows contact window
-async function showContactView(i){
-  document.getElementById('mobileOptions').classList.add("mobileOptionsOn");
+async function showContactView(i) {
+  /*   document.getElementById('mobileOptions').classList.add('mobileOptionsOn'); */
   // const contactsString = await getItem("kontakte");
   const contactsString = await getUsers();
 
@@ -120,16 +119,14 @@ async function showContactView(i){
   contactsString.sort((a, b) => a.username.localeCompare(b.username));
   const contact = contactsString[i];
 
-
-
   const { username, email, phone } = contact;
   contactView.classList.add('contactViewOn');
   contactView.classList.remove('contactViewOff');
-  let words = contact.username.split(" ");
-  let uppercaseLetter = words.map(word => word.charAt(0).toUpperCase()).join("");
+  let words = contact.username.split(' ');
+  let uppercaseLetter = words.map((word) => word.charAt(0).toUpperCase()).join('');
   let firstLetter = uppercaseLetter.charAt(0);
   // const uppercaseLetter = username.split("").filter((char) => /[A-Z]/.test(char)).join("");
-  contactView.innerHTML = "";
+  contactView.innerHTML = '';
   contactView.innerHTML += renderContactView(contact.id, username, email, phone, firstLetter);
   changeContactColor(i);
   currentEditIndex = i;
@@ -137,13 +134,12 @@ async function showContactView(i){
 
 // contact info render html
 function renderContactView(i, name, email, phone, firstLetter) {
-  if (name == "Guest"){
-    email = '',
-    phone = ''
+  if (name == 'Guest') {
+    (email = ''), (phone = '');
   }
   return `
         <div class="mobileBackArrow" onclick="openContactView(${i})">
-          <img src="assets/img/arrow-left-line.png" alt="">
+          <img src="img/Pfeil-links.png" alt="">
         </div>
     <div class="contacts-top">
     <h2>Contact Information</h2>
@@ -180,11 +176,11 @@ function renderContactView(i, name, email, phone, firstLetter) {
     <div class="profileName">
       <h1 id="profileName">${name}</h1>
       <div class="profileActions">
-        <button class="profileEdit" onclick="editContact(${i})">
-          <img src="assets/img/edit.png" alt=""/> Edit
+        <button class="button01" onclick="editContact(${i})">
+          <img src="img/pencil-icon-edit.png" alt=""/> Edit
         </button>
-        <button class="profileDel" onclick="delContact(${i})">
-          <img src="assets/img/delete.png" alt=""/> Delete
+        <button class="button01" onclick="delContact(${i})">
+          <img src="img/deletetrashcan.png" alt=""/> Delete
         </button>
       </div>
       </div>
@@ -203,79 +199,78 @@ function renderContactView(i, name, email, phone, firstLetter) {
     </div> `;
 }
 
-function removeContactView(contactView){
+function removeContactView(contactView) {
   contactView.classList.add('contactViewOff');
   contactView.classList.remove('contactViewOn');
-  document.getElementById('mobileOptions').classList.remove("mobileOptionsOn");
+  /*   document.getElementById('mobileOptions').classList.remove("mobileOptionsOn"); */
   removeWhiteColor();
-  setTimeout(() => (contactView.innerHTML = ""), 100);
+  setTimeout(() => (contactView.innerHTML = ''), 100);
 }
 
 // changes color when contactView is opened
 function changeContactColor(i) {
-    const contactElement = document.getElementById(`contactInfo${i}`);
-    const nameElement = document.getElementById(`contactName${i}`);
-    const mailElement = document.getElementById(`contactMail${i}`);
-      addWhiteColor(contactElement, nameElement, mailElement);
+  const contactElement = document.getElementById(`contactInfo${i}`);
+  const nameElement = document.getElementById(`contactName${i}`);
+  const mailElement = document.getElementById(`contactMail${i}`);
+  addWhiteColor(contactElement, nameElement, mailElement);
 }
 
 // adds font color to clicked contactView element
-function addWhiteColor(contactElement, nameElement, mailElement){
-  contactElement.classList.add("blueColor");
-  nameElement.classList.add("whiteColor");
-  mailElement.classList.add("whiteColor");
+function addWhiteColor(contactElement, nameElement, mailElement) {
+  contactElement.classList.add('blueColor');
+  nameElement.classList.add('whiteColor');
+  mailElement.classList.add('whiteColor');
 }
 
-//removes font color 
-function removeWhiteColor(){
+//removes font color
+function removeWhiteColor() {
   let info = document.getElementsByClassName('contactInfo');
   for (let i = 0; i < info.length; i++) {
     const contactElement = document.getElementById(`contactInfo${i}`);
     const nameElement = document.getElementById(`contactName${i}`);
-    const mailElement = document.getElementById(`contactMail${i}`);    3
-    contactElement.classList.remove("blueColor");
-    nameElement.classList.remove("whiteColor");
-    mailElement.classList.remove("whiteColor");
+    const mailElement = document.getElementById(`contactMail${i}`);
+    3;
+    contactElement.classList.remove('blueColor');
+    nameElement.classList.remove('whiteColor');
+    mailElement.classList.remove('whiteColor');
   }
 }
 
 // opens Add New Contact Window popup
 function addNewContactWindow() {
-  let addNewContact = document.getElementById("addContact");
+  let addNewContact = document.getElementById('addContact');
   addNewContact.style.display = 'flex';
   setTimeout(() => {
     addNewContact.classList.add('overlay-content');
   }, 1);
-  document.getElementById("popup-bg").style.display = "block";
-
+  document.getElementById('popup-bg').style.display = 'block';
 }
 
 // responsive mobile options window for Edit and Delete button
-function mobileOptionsWindow(){
-  document.getElementById("popup-bg").style.display = "block";
+function mobileOptionsWindow() {
+  document.getElementById('popup-bg').style.display = 'block';
   let window = document.getElementById('mobileOptionsWindow');
-  window.style.display = "inline-flex";
+  window.style.display = 'inline-flex';
   window.style.zIndex = 100;
 }
 
 // function for mobile contact editing
-async function mobileEditContact(){
+async function mobileEditContact() {
   editContact(currentEditIndex);
 }
 
 // function for mobile contact deleting
-async function mobileDelContact(){
+async function mobileDelContact() {
   delContact(currentEditIndex);
 }
 
-
 // takes the input from add contact window and adds the contact to storage if its not a duplicate name
-async function addContact(){
+async function addContact() {
   try {
     let { addContactNameInput, addContactEmailInput, addContactPhoneInput } = getAddContactInputs();
     let newContact = createNewContact(addContactNameInput.value, addContactEmailInput.value, addContactPhoneInput.value);
 
-    if (loadedContacts.some(contact => contact.username.toLowerCase() === addContactNameInput.value.toLowerCase())) {
+    if (loadedContacts.some((contact) => contact.username.toLowerCase() === addContactNameInput.value.toLowerCase())) {
       closeAddNewContact();
     } else {
       await handleValidContact(newContact);
@@ -295,21 +290,21 @@ function getAddContactInputs() {
   const nameError = errorMessages(addContactNameInput, 'nameError');
   const emailError = errorMessages(addContactEmailInput, 'emailError');
   const phoneError = errorMessages(addContactPhoneInput, 'phoneError');
-  
+
   if (nameError || emailError || phoneError) {
     return null;
   }
   return {
     addContactNameInput,
     addContactEmailInput,
-    addContactPhoneInput
+    addContactPhoneInput,
   };
 }
 
 //check input for wrong input
 function errorMessages(input, errorId) {
   let numbers = /^[0-9]+$/;
-  
+
   if (!input.value.trim()) {
     document.getElementById(errorId).style.display = 'block';
     return true;
@@ -321,11 +316,9 @@ function errorMessages(input, errorId) {
   if (input.id === 'addContactPhone' && !input.value.match(numbers)) {
     document.getElementById(errorId).style.display = 'block';
     return true;
-  }
-  else {
-   
-  document.getElementById(errorId).style.display = 'none';
-    return 
+  } else {
+    document.getElementById(errorId).style.display = 'none';
+    return;
   }
 }
 
@@ -335,7 +328,7 @@ function createNewContact(name, email, phone) {
     name,
     email,
     phone,
-    id: new Date().getTime()
+    id: new Date().getTime(),
   };
 }
 
@@ -343,160 +336,157 @@ function createNewContact(name, email, phone) {
 async function handleValidContact(newContact) {
   loadedContacts.push(newContact);
   loadedContacts.sort((a, b) => a.username.localeCompare(b.username));
-  await setUser(loadedContacts.email, loadedContacts.username, loadedContacts.password)
+  await setUser(loadedContacts.email, loadedContacts.username, loadedContacts.password);
   // await setItem("kontakte", JSON.stringify(loadedContacts));
   await contactsListRender(loadedContacts);
   closeAddNewContact();
   setTimeout(addContactSuccess, 800);
 }
 
-
-async function addMobileContact() {  
+async function addMobileContact() {
   addNewContactWindow();
 }
 
 // popup to show contact add success
-function addContactSuccess(){
+function addContactSuccess() {
   let success = document.getElementById('newContactSuccess');
   success.style.display = 'inline-flex';
-    setTimeout(function() {
-      success.style.top = '50%';
-  }, 50)
+  setTimeout(function () {
+    success.style.top = '50%';
+  }, 50);
   setTimeout(addContactSuccessClose, 2000);
 }
 
 // closes the success popup again
-function addContactSuccessClose(){
+function addContactSuccessClose() {
   let success = document.getElementById('newContactSuccess');
   success.style.top = '120%';
-  setTimeout(function() {
-    success.style.display = 'none';  
-}, 50)
+  setTimeout(function () {
+    success.style.display = 'none';
+  }, 50);
 }
 
-let currentEditIndex; 
+let currentEditIndex;
 
-
-// edit clicked contact 
+// edit clicked contact
 async function editContact(i) {
-  let editContactWindow = document.getElementById("editContact");
+  let editContactWindow = document.getElementById('editContact');
   editContactWindow.style.display = 'inline-flex';
   setTimeout(() => {
     editContactWindow.classList.add('editContactOn');
   }, 1);
   // const contact = JSON.parse(await getItem("kontakte"))[i];
   // const contact = localStorage.getItem('User')
-  const contacts = await getUsers()
-  const contact = contacts[i - 1]
+  const contacts = await getUsers();
+  const contact = contacts[i - 1];
   // console.log(contact)
-  let words = contact.username.split(" ");
-  let uppercaseLetter = words.map(word => word.charAt(0).toUpperCase()).join("");
+  let words = contact.username.split(' ');
+  let uppercaseLetter = words.map((word) => word.charAt(0).toUpperCase()).join('');
   let firstLetter = uppercaseLetter.charAt(0);
   // const uppercaseLetter = contact.username.split("").filter((char) => /[A-Z]/.test(char)).join("");
 
-  document.getElementById("popup-bg").style.display = "block";
-  document.getElementById("editContactName").value = contact.username;
-  document.getElementById("editContactEmail").value = contact.email;
-  document.getElementById("editContactPhone").value =  contact.phone;
-  document.getElementById("contactEditImage").innerHTML = firstLetter;
+  document.getElementById('popup-bg').style.display = 'block';
+  document.getElementById('editContactName').value = contact.username;
+  document.getElementById('editContactEmail').value = contact.email;
+  document.getElementById('editContactPhone').value = contact.phone;
+  document.getElementById('contactEditImage').innerHTML = firstLetter;
   currentEditIndex = i;
-  
 }
 
 // save edited contact to storage
 async function saveChangeContact() {
   const editedIndex = currentEditIndex - 1;
   // const contactsString = await getItem("kontakte");
-  loadedContacts = await getUsers()
+  loadedContacts = await getUsers();
   // loadedContacts = JSON.parse(contactsString);
   const editedContact = loadedContacts[editedIndex];
-const edits = getChangedEdits();
-if (!edits){
-  return
-} else {
-  let { editedName, editedEmail, editedPhone } = edits;
-  editedContact.username = editedName;
-  editedContact.email = editedEmail;
-  editedContact.phone = editedPhone;
-  await updateUser(editedEmail, editedName, editedPhone, editedContact.id);
-  loadedContacts = await getUsers();
-  loadedContacts.sort((a, b) => a.username.localeCompare(b.username));
-  contactsListRender(loadedContacts);
-  closeEditContact();
-  closeMobileOptionsWindow();
-  location.reload
-  openContactView(editedIndex)
-}
+  const edits = getChangedEdits();
+  if (!edits) {
+    return;
+  } else {
+    let { editedName, editedEmail, editedPhone } = edits;
+    editedContact.username = editedName;
+    editedContact.email = editedEmail;
+    editedContact.phone = editedPhone;
+    await updateUser(editedEmail, editedName, editedPhone, editedContact.id);
+    loadedContacts = await getUsers();
+    loadedContacts.sort((a, b) => a.username.localeCompare(b.username));
+    contactsListRender(loadedContacts);
+    closeEditContact();
+    closeMobileOptionsWindow();
+    location.reload;
+    openContactView(editedIndex);
+  }
 }
 
 // gets the input from the changed contact
-function getChangedEdits(){
-  const name = document.getElementById("editContactName");
-  const email = document.getElementById("editContactEmail");
-  const phone = document.getElementById("editContactPhone");
+function getChangedEdits() {
+  const name = document.getElementById('editContactName');
+  const email = document.getElementById('editContactEmail');
+  const phone = document.getElementById('editContactPhone');
   const nameError = errorMessages(name, 'editNameError');
   const emailError = errorMessages(email, 'editEmailError');
   const phoneError = errorMessages(phone, 'editPhoneError');
   const editedName = name.value;
   const editedEmail = email.value;
   const editedPhone = phone.value;
-  
+
   if (nameError || emailError || phoneError) {
-    return ;
+    return;
   }
   return {
     editedName,
     editedEmail,
-    editedPhone
+    editedPhone,
   };
 }
 
 // delete edited contact from storage
-async function delEditedContact(){
+async function delEditedContact() {
   const deletedIndex = currentEditIndex - 1;
   // const contactsString = await getItem("kontakte");
   loadedContacts = JSON.parse(contactsString);
   loadedContacts.splice(deletedIndex, 1)[0];
-  delContact(deletedIndex)
+  delContact(deletedIndex);
   // await setItem("kontakte", JSON.stringify(loadedContacts));
   contactsListRender(loadedContacts);
-  openContactView(currentEditIndex)
+  openContactView(currentEditIndex);
   closeEditContact();
   closeMobileOptionsWindow();
 }
 
 // delete contact from storage
 async function delContact(i) {
-    await deleteUser(i);
-    loadedContacts = await getUsers()
-    contactsListRender(loadedContacts);
-    openContactView(i);
-    closeMobileOptionsWindow();
-    location.reload()
+  await deleteUser(i);
+  loadedContacts = await getUsers();
+  contactsListRender(loadedContacts);
+  openContactView(i);
+  closeMobileOptionsWindow();
+  location.reload();
 }
 
 // close add new contact popup
 function closeAddNewContact() {
-  let addNewContact = document.getElementById("addContact");
+  let addNewContact = document.getElementById('addContact');
   addNewContact.classList.remove('overlay-content');
-  document.getElementById("popup-bg").style.display = "none";
+  document.getElementById('popup-bg').style.display = 'none';
   addNewContact.style.display = 'none';
   document.getElementById('addContactName').value = '';
-  document.getElementById('addContactEmail').value ='';
-  document.getElementById('addContactPhone').value ='';
-  resetError()
+  document.getElementById('addContactEmail').value = '';
+  document.getElementById('addContactPhone').value = '';
+  resetError();
 }
 
 // close edit contact popup
 function closeEditContact() {
-  let editContactWindow = document.getElementById("editContact");
+  let editContactWindow = document.getElementById('editContact');
   editContactWindow.classList.remove('editContactOn');
-  editContactWindow.style.display = 'none'
-  document.getElementById("popup-bg").style.display = "none";
-  document.getElementById("editContactName").value = '';
-  document.getElementById("editContactEmail").value = '';
-  document.getElementById("editContactPhone").value = '';
-  resetError()
+  editContactWindow.style.display = 'none';
+  document.getElementById('popup-bg').style.display = 'none';
+  document.getElementById('editContactName').value = '';
+  document.getElementById('editContactEmail').value = '';
+  document.getElementById('editContactPhone').value = '';
+  resetError();
 }
 
 // changes display of errors back to none
@@ -509,30 +499,27 @@ function resetError() {
   document.getElementById('editPhoneError').style.display = 'none';
 }
 
-
-function closeWindow(element){
-  element.style.display = "none";
+function closeWindow(element) {
+  element.style.display = 'none';
 }
 
 // close mobile options for Edit and Delete
-function closeMobileOptionsWindow(){
+function closeMobileOptionsWindow() {
   let window = document.getElementById('mobileOptionsWindow');
-  window.style.display = "none";
-  document.getElementById("popup-bg").style.display = "none";
+  window.style.display = 'none';
+  document.getElementById('popup-bg').style.display = 'none';
 }
 
 // adds a listener to popup background to close itself and other functions
-document.addEventListener("DOMContentLoaded", function () {
-  let popupBg =  document.getElementById("popup-bg")
-    if (popupBg) {
-      popupBg.addEventListener("click", function (event) {
-        event.stopPropagation();
-        popupBg.style.display = "none";
-        closeAddNewContact();
-        closeEditContact();
-        closeMobileOptionsWindow();
-      });
-    }
-
+document.addEventListener('DOMContentLoaded', function () {
+  let popupBg = document.getElementById('popup-bg');
+  if (popupBg) {
+    popupBg.addEventListener('click', function (event) {
+      event.stopPropagation();
+      popupBg.style.display = 'none';
+      closeAddNewContact();
+      closeEditContact();
+      closeMobileOptionsWindow();
+    });
+  }
 });
-
