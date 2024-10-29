@@ -72,7 +72,7 @@ function generateOpenInfoCardHTML(element, elementID) {
             <div class="spacebetween pointer">
                 ${categoryHTML}                
                 <div onclick="closeTaskPopup()">
-                    <img src="assets/img/close.png" alt="">
+                    <img src="img/cross-icon.png" alt="">
                 </div>
             </div>
             
@@ -103,12 +103,12 @@ function generateOpenInfoCardHTML(element, elementID) {
 
             <div class="editButtonContainer">
                 <div class="editButton" onclick="deleteTask(${elementID})">
-                    <img src="assets/img/delete.png" alt="">
+                    <img src="img/deletetrashcan.png" alt="">
                     <p>Delete </p> 
                 </div> 
                 <p>|</p>
                 <div class="editButton" onclick="editTask(${elementID})">
-                    <img src="assets/img/edit.png" alt="">
+                    <img src="img/pencil-icon-edit.png" alt="">
                     <p>Edit</p>
                 </div>
             </div>
@@ -134,7 +134,7 @@ function openEditTaskForm(element, elementID) {
                 <div class="spacebetween pointer">
                     ${categoryHTML}                
                     <div onclick="closeTaskPopup()">
-                        <img src="assets/img/close.png" alt="">
+                        <img src="img/cross-icon.png" alt="">
                     </div>
                 </div>
                 <input required class="pointer" type="text" placeholder="Enter a title" id="add-task-title" value="${element[0].title}">
@@ -277,7 +277,7 @@ function generateEmtyTaskFormHTML() {
                 <div>
                     <h4 for="add-task-category">Category</h4>       
                     <div class="new-category-container">
-                        <div class="category pointer" onclick="showAndHideCategories()">
+                        <div class="category-addtask pointer" onclick="showAndHideCategories()">
                             <div id="add-task-currently-selected-category">Select task category</div>
                             <img id="arrow-categories" src="img/arrow-down.png" alt="">
                         </div>

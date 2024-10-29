@@ -303,7 +303,7 @@ h1 {
 
 /*BISHER OHNE ZUORDNUNG*/
 
-.popup {
+/* .popup {
   text-align: center;
   position: fixed;
   width: 400px;
@@ -316,7 +316,7 @@ h1 {
   color: #333;
   visibility: hidden;
   transition: transform 0.4s, right 0.4s;
-}
+} */
 
 .open-popup {
   visibility: visible;

@@ -20,10 +20,11 @@
     <script src="script/add-task.js"></script>
     <script src="script/add-task-subtask.js"></script>
     <script src="script/board.js"></script>
+    <script src="script/assignd-Contacts-Subtasks.js"></script>
     <script src="script/board-html.js"></script>
     <script src="script/board-edit.js"></script>
     <script src="script/board-extra.js"></script>
-    <script src="script/assignd-Contacts-Subtasks.js"></script>
+<script src="script/drag-drop.js"></script>
     <script src="script/database.js"></script>
   </head>
 
@@ -34,7 +35,7 @@
         <h1>Board</h1>
         <div class="inp-container">
           <input type="search" name="" id="findTask" placeholder="Find Task" oninput="searchTasks()" />
-          <button onclick="openAddTaskForm(), saveStatus('toDo')" class="button01 buttonAddTask">Add task +</button>
+          <!--           <button onclick="openAddTaskForm(), saveStatus('toDo')" class="button01 buttonAddTask">Add task +</button> -->
         </div>
       </div>
 
@@ -42,23 +43,23 @@
         <div class="box-container-child">
           <div class="box-container-column">
             <p>To do</p>
-            <img class="change-color2" src="img/plus-button.png" alt="" onclick="openAddTaskForm(), saveStatus('todo')" />
+            <!--             <img class="change-color2" src="img/plus-button.png" alt="" onclick="openAddTaskForm(), saveStatus('todo')" /> -->
           </div>
-          <div id="todoListContainer" class="dragdrop" ondrop="moveTo('todo')" ondragover="allowDrop(event)"></div>
+          <div id="todoListContainer" class="drag-area" ondrop="moveTo('todo')" ondragover="allowDrop(event)"></div>
         </div>
 
         <div class="box-container-child">
           <div class="box-container-column">
             <p>In progress</p>
-            <img class="change-color2" src="img/plus-button.png" alt="" onclick="openAddTaskForm(), saveStatus('progress')" />
+            <!--             <img class="change-color2" src="img/plus-button.png" alt="" onclick="openAddTaskForm(), saveStatus('progress')" /> -->
           </div>
-          <div id="progressListContainer" class="dragdrop" ondrop="moveTo('progress')" ondragover="allowDrop(event)"></div>
+          <div id="progressListContainer" class="drag-area" ondrop="moveTo('progress')" ondragover="allowDrop(event)"></div>
         </div>
 
         <div class="box-container-child">
           <div class="box-container-column">
             <p>Awaiting Feedback</p>
-            <img class="change-color2" src="img/plus-button.png" alt="" onclick="openAddTaskForm(), saveStatus('feedback')" />
+            <!--             <img class="change-color2" src="img/plus-button.png" alt="" onclick="openAddTaskForm(), saveStatus('feedback')" /> -->
           </div>
           <div id="awaitFeedbackListContainer" class="dragdrop" ondrop="moveTo('feedback')" ondragover="allowDrop(event)"></div>
         </div>
@@ -66,7 +67,7 @@
         <div class="box-container-child">
           <div class="box-container-column">
             <p>Done</p>
-            <img class="change-color2" src="img/plus-button.png" alt="" onclick="openAddTaskForm(),saveStatus('done')" />
+            <!--             <img class="change-color2" src="img/plus-button.png" alt="" onclick="openAddTaskForm(),saveStatus('done')" /> -->
           </div>
           <div id="doneListContainer" class="dragdrop" ondrop="moveTo('done')" ondragover="allowDrop(event)"></div>
         </div>

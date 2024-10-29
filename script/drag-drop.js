@@ -46,7 +46,7 @@ function endDragging() {
  */
 async function moveTo(category) {
     if (currentDraggedElement) {
-        await updateTodoStatus(currentDraggedElement.id, category)
+        await updateTaskStatus(currentDraggedElement.id, category)
         await updateHTML();
     }
 }
