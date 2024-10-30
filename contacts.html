@@ -51,10 +51,12 @@
                 <input class="inputs" type="text" id="addContactName" placeholder="Firstname Lastname" pattern="[\w\s]+\s[\w\s]+" required
                   style="background-image: url('./img/user.png')"/>
                 <span class="submitInputs submitContacts d-none" id="nameError">Please insert first- AND lastname.</span>
-                <input class="inputs" type="email" required placeholder="e-mail" style="background-image: url('./img/mail-icon.png')" id="addContactEmail" />
+                <input class="inputs" type="email" required placeholder="e-mail" style="background-image: url('/img/mail-icon.png')" id="addContactEmail" />
                 <span class="submitInputs submitContacts d-none" id="emailError">Please insert a valid e-Mail address containing "@".</span>
-                <input class="inputs" type="number" required placeholder="Phone" style="background-image: url('./img/phone-icon.png')" id="addContactPhone" />
+                <input class="inputs" type="number" required placeholder="Phone" style="background-image: url('/img/phone-icon.png')" id="addContactPhone" />
                 <span class="submitInputs submitContacts d-none" id="phoneError">Please insert a phonenumber, containing numbers only.</span>
+                <input class="inputs" type="password" required placeholder="Password" style="background-image: url('img/schloss-icon.png')" id="addContactPassword" />
+                <span class="submitInputs submitContacts d-none" id="passwordError">Please insert a password.</span>
                 <div class="createContainer">
                   <button onclick="closeAddNewContact()" class="button02">
                     <p>Cancel</p>
@@ -73,7 +75,7 @@
         </div>
       </div>
     <div class="mobileAddContact" id="mobileAddContact" onclick="addMobileContact()">
-      <img src="/assets/img/person_add.png" alt="" />
+      <img src="img/add-new-contakt-icon.png" alt="" />
     </div>
     <div class="mobileOptions" id="mobileOptions" onclick="mobileOptionsWindow()">
       <svg xmlns="http://www.w3.org/2000/svg" width="33" height="32" viewBox="0 0 33 32" fill="none">
@@ -89,8 +91,8 @@
       </svg>
     </div>
     <div class="mobileOptionsWindow" id="mobileOptionsWindow">
-      <button class="profileEdit" onclick="mobileEditContact()"><img src="assets/img/edit.png" alt="" /> Edit</button>
-      <button class="profileDel" onclick="mobileDelContact()"><img src="assets/img/delete.png" alt="" /> Delete</button>
+      <button class="profileEdit" onclick="mobileEditContact()"><img src="img/pencil-icon-edit.png" alt="" /> Edit</button>
+      <button class="profileDel" onclick="mobileDelContact()"><img src="img/deletetrashcan.png" alt="" /> Delete</button>
     </div>
     <div class="editContact" id="editContact">
       <div class="editContactTop">
@@ -124,7 +126,7 @@
           <button type="button" onclick="delEditedContact()" class="delEditContact"><p>Delete</p></button>
           <button type="button" onclick="saveChangeContact()" class="saveEditContact">
             <p>Save</p>
-            <img src="assets/img/check.png" alt="" />
+            <img src="img/done-icon.png" alt="" />
           </button>
         </div>
       </div>

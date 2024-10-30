@@ -111,21 +111,15 @@ async function openContactView(i) {
 
 //shows contact window
 async function showContactView(i) {
-  /*   document.getElementById('mobileOptions').classList.add('mobileOptionsOn'); */
-  // const contactsString = await getItem("kontakte");
   const contactsString = await getUsers();
-
-  // loadedContacts = JSON.parse(contactsString);
   contactsString.sort((a, b) => a.username.localeCompare(b.username));
   const contact = contactsString[i];
-
   const { username, email, phone } = contact;
   contactView.classList.add('contactViewOn');
   contactView.classList.remove('contactViewOff');
   let words = contact.username.split(' ');
   let uppercaseLetter = words.map((word) => word.charAt(0).toUpperCase()).join('');
   let firstLetter = uppercaseLetter.charAt(0);
-  // const uppercaseLetter = username.split("").filter((char) => /[A-Z]/.test(char)).join("");
   contactView.innerHTML = '';
   contactView.innerHTML += renderContactView(contact.id, username, email, phone, firstLetter);
   changeContactColor(i);
@@ -267,8 +261,13 @@ async function mobileDelContact() {
 // takes the input from add contact window and adds the contact to storage if its not a duplicate name
 async function addContact() {
   try {
-    let { addContactNameInput, addContactEmailInput, addContactPhoneInput } = getAddContactInputs();
-    let newContact = createNewContact(addContactNameInput.value, addContactEmailInput.value, addContactPhoneInput.value);
+    let { addContactNameInput, addContactEmailInput, addContactPhoneInput, addContactPasswordInput } = getAddContactInputs();
+    let newContact = createNewContact(
+      addContactNameInput.value,
+      addContactEmailInput.value,
+      addContactPhoneInput.value,
+      addContactPasswordInput.value
+    );
 
     if (loadedContacts.some((contact) => contact.username.toLowerCase() === addContactNameInput.value.toLowerCase())) {
       closeAddNewContact();
@@ -286,18 +285,21 @@ function getAddContactInputs() {
   const addContactNameInput = document.getElementById('addContactName');
   const addContactEmailInput = document.getElementById('addContactEmail');
   const addContactPhoneInput = document.getElementById('addContactPhone');
+  const addContactPasswordInput = document.getElementById('addContactPassword');
 
   const nameError = errorMessages(addContactNameInput, 'nameError');
   const emailError = errorMessages(addContactEmailInput, 'emailError');
   const phoneError = errorMessages(addContactPhoneInput, 'phoneError');
+  const passwordError = errorMessages(addContactPhoneInput, 'passwordError');
 
-  if (nameError || emailError || phoneError) {
+  if (nameError || emailError || phoneError || passwordError) {
     return null;
   }
   return {
     addContactNameInput,
     addContactEmailInput,
     addContactPhoneInput,
+    addContactPasswordInput,
   };
 }
 
@@ -323,11 +325,12 @@ function errorMessages(input, errorId) {
 }
 
 //creates a new contact with the input
-function createNewContact(name, email, phone) {
+function createNewContact(name, email, phone, password) {
   return {
-    name,
+    username: name,
     email,
     phone,
+    password,
     id: new Date().getTime(),
   };
 }
@@ -336,7 +339,7 @@ function createNewContact(name, email, phone) {
 async function handleValidContact(newContact) {
   loadedContacts.push(newContact);
   loadedContacts.sort((a, b) => a.username.localeCompare(b.username));
-  await setUser(loadedContacts.email, loadedContacts.username, loadedContacts.password);
+  await setUser(newContact.email, newContact.username, newContact.password, newContact.phone);
   // await setItem("kontakte", JSON.stringify(loadedContacts));
   await contactsListRender(loadedContacts);
   closeAddNewContact();
@@ -474,7 +477,9 @@ function closeAddNewContact() {
   document.getElementById('addContactName').value = '';
   document.getElementById('addContactEmail').value = '';
   document.getElementById('addContactPhone').value = '';
+  document.getElementById('addContactPassword').value = '';
   resetError();
+  loadContacts();
 }
 
 // close edit contact popup

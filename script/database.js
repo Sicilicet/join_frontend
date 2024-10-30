@@ -16,7 +16,7 @@ async function getUsers() {
 }
 
 //create user and register to backend
-async function setUser(email, username, password) {  
+async function setUser(email, username, password, phone) {  
     const url = 'http://127.0.0.1:8000/register/'; 
     const requestOptions = {
         method: 'POST',
@@ -27,6 +27,7 @@ async function setUser(email, username, password) {
             "email": email,
             "username": username,
             "password": password,
+            "phone": phone,
         })
     }
     try {

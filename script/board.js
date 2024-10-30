@@ -218,7 +218,7 @@ async function updateEditedTask(elementID){
     let updatedAssignedContacts = [...currentAssignedContacts, ...matchingUserIds];
     updatedAssignedContacts = [...new Set(updatedAssignedContacts)];
     renderAssignableContactsEdit(elementID);
-    await updateTodo(title, description, date, priority, updatedAssignedContacts, category, subtask, currentTask[0].id)
+    await updateTask(title, description, date, priority, updatedAssignedContacts, category, subtask, currentTask[0].id)
     await updateHTML();
     location.reload();
     } catch (error){
@@ -239,7 +239,7 @@ async function removeUserFromTask(user){
     let currentAssignedContacts = currentTask[0].users; // id's
     const updatedAssignedContacts = currentAssignedContacts.filter(contactId => contactId !== user[0].id);
     renderAssignableContactsEdit(currentTodoId);
-    await updateTodo(title, description, date, priority, updatedAssignedContacts, category, subtask, currentTask[0].id)
+    await updateTask(title, description, date, priority, updatedAssignedContacts, category, subtask, currentTask[0].id)
     await updateHTML();
     // location.reload();
 }
