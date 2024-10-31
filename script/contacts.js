@@ -392,7 +392,7 @@ async function editContact(i) {
   document.getElementById('editContactName').value = contact.username;
   document.getElementById('editContactEmail').value = contact.email;
   document.getElementById('editContactPhone').value = contact.phone;
-  document.getElementById('contactEditImage').innerHTML = firstLetter;
+/*   document.getElementById('contactEditImage').innerHTML = firstLetter; */
   currentEditIndex = i;
 }
 

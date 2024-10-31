@@ -94,40 +94,35 @@
       <button class="profileEdit" onclick="mobileEditContact()"><img src="img/pencil-icon-edit.png" alt="" /> Edit</button>
       <button class="profileDel" onclick="mobileDelContact()"><img src="img/deletetrashcan.png" alt="" /> Delete</button>
     </div>
-    <div class="editContact" id="editContact">
-      <div class="editContactTop">
+
+    <div class="contactOverview overlay-content" id="editContact">
+      <div class="boardDescription">
         <button onclick="closeEditContact()"></button>
-        <img src="img\Join-icon.png" alt="" />
-        <h2>Edit contact</h2>
+        <h1>Edit Contact</h1>
+        <div class="strich"></div>
+        <div class="boardSlogan">Better with a team</div>
       </div>
-      <div class="editContactBottom">
-        <div class="editContactImage">
-          <svg xmlns="http://www.w3.org/2000/svg" width="120" height="121" viewBox="0 0 120 121" fill="none">
-            <circle cx="60" cy="60.4829" r="60" fill="#FF7A00" />
-            <text id="contactEditImage" font-size="56.4px" text-anchor="middle" x="50%" y="50%" fill="white" stroke-width="0.1px" dy=".3em"></text>
-          </svg>
+      <div class="initialsSectionOverlay">
+        <div class="overlayAddUserPic">
+          <img src="img\user.png" alt="" width="41px" color="white" />
         </div>
-        <div class="editContactInput">
-          <input class="editName" required type="name" id="editContactName" placeholder="Name" autocomplete="off" /><span id="editNameError"
-            >please enter a real name</span
-          >
-        </div>
-        <div class="editContactInput">
-          <input class="editEmail" required type="email" id="editContactEmail" placeholder="Email" autocomplete="off" /><span id="editEmailError"
-            >please enter a correct email</span
-          >
-        </div>
-        <div class="editContactInput">
-          <input class="editPhone" required type="text" id="editContactPhone" placeholder="Phone" autocomplete="off" /><span id="editPhoneError"
-            >please enter a correct phone number</span
-          >
-        </div>
-        <div class="editContactBtns">
-          <button type="button" onclick="delEditedContact()" class="delEditContact"><p>Delete</p></button>
-          <button type="button" onclick="saveChangeContact()" class="saveEditContact">
+        <div class="editInputs">
+          <p class="editInputsP" onclick="closeEditContact()">+</p>
+          <div class="formContacts">
+            <input class="inputs" required type="name" id="editContactName" placeholder="Name" autocomplete="off" /><span id="editNameError"
+              >please enter a real name</span>
+            <input class="inputs" required type="email" id="editContactEmail" placeholder="Email" autocomplete="off" /><span id="editEmailError"
+              >please enter a correct email</span>
+            <input class="inputs" required type="text" id="editContactPhone" placeholder="Phone" autocomplete="off" /><span id="editPhoneError"
+            >please enter a correct phone number</span>
+            <div class="createContainer">
+            <button type="button" onclick="delEditedContact()" class="button02"><p>Delete</p></button>
+            <button type="button" onclick="saveChangeContact()" class="button01">
             <p>Save</p>
-            <img src="img/done-icon.png" alt="" />
-          </button>
+            <img src="img\done.png" alt="" />
+            </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
